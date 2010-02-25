@@ -23,7 +23,7 @@ import analysis.Utility;
 
 /**
  * Relationship Activity <-> In/Out/Temp
- * @author Sebastian Breier
+ * @author yangyang Gao
  *
  */
 public class Placement {
@@ -50,6 +50,11 @@ public class Placement {
 		boolean sameActivity = getElement().equals(other.getElement());
 		boolean samePlace = getPlace().equals(other.getPlace());
 		return sameActivity && samePlace;
+	}
+	
+	@Override
+	public int hashCode() {
+		return element.hashCode() + place.hashCode();
 	}
 
 	/**

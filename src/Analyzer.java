@@ -1,5 +1,8 @@
+import infrastructure.InOut;
+import infrastructure.Placement;
 import infrastructure.State;
-import infrastructure.Variable;
+import infrastructure.VariableElement;
+import infrastructure.Writes;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -44,58 +47,19 @@ public class Analyzer {
 	 */
 	public static void main(String[] args) {
 		init();
-		org.eclipse.bpel.model.Process process = loadProcess("MotivatingExample.bpel");
+		//org.eclipse.bpel.model.Process process = loadProcess("C:\\Dokumente und Einstellungen\\gao\\workspace\\test\\bpeltest\\testEL.bpel");
+		//org.eclipse.bpel.model.Process process = loadProcess("C:\\Dokumente und Einstellungen\\gao\\workspace\\test\\PickProcess\\PickProcess\\PickProcess.bpel");
+		//org.eclipse.bpel.model.Process process = loadProcess("C:\\Dokumente und Einstellungen\\gao\\workspace\\test\\Example1\\MotivatingExample.bpel");
+		org.eclipse.bpel.model.Process process = loadProcess("C:\\Dokumente und Einstellungen\\gao\\workspace\\test\\Linktest\\test3.bpel");
+		//org.eclipse.bpel.model.Process process = loadProcess("C:\\Dokumente und Einstellungen\\gao\\workspace\\test\\ScopeTest\\CPtest.bpel");
+		//org.eclipse.bpel.model.Process process = loadProcess("C:\\Dokumente und Einstellungen\\gao\\workspace\\test\\throwTest\\test5.bpel");
+		//org.eclipse.bpel.model.Process process = loadProcess("C:\\Dokumente und Einstellungen\\gao\\workspace\\test\\DynamicInvoke\\DynamicInvokeProcess\\DynamicInvokeProcess.bpel");
 		State.clearState();
-		loadVariables("MotivatingExample.vars");
+		
 //		State.getInstance().dumpVariables();
 		analysis.Process.analyzeProcessModel(process);
-	}
-	
-	/**
-	 * Load variables from the given file
-	 * @param string
-	 */
-	private static void loadVariables(String fileName) {
-		BufferedReader reader = getBufferedReader(fileName);
-		if (reader == null) {
-			return;
-		}
-		String string = readLine(reader);
-		while (string != null) {
-			if (!string.startsWith("//")) {
-				Variable variable = createVariable(string);
-			}
-			string = readLine(reader);
-		}
-	}
-
-	/**
-	 * Create a new variable element from a string
-	 * Adds it to the State too
-	 * @param variableID
-	 * @return
-	 */
-	private static Variable createVariable(String variableID) {
-		String parentName;
-		String realName;
-		State myState = State.getInstance();
-		boolean isSubElement = variableID.contains(".");
-		if (isSubElement) {
-			parentName = variableID.substring(0, variableID.indexOf('.'));
-			realName = variableID.substring(variableID.indexOf('.') + 1, variableID.length());
-		} else {
-			parentName = null;
-			realName = variableID;
-		}
-		Variable var = new Variable(realName);
-		if (isSubElement) {
-			Variable parent = myState.getVariableByName(parentName);
-			if (parent != null) {
-				parent.addSubElement(var);
-			}
-		}
-		myState.addVariable(variableID, var);
-		return var;
+		
+		//TODO: output State as BPEL-D?!
 	}
 
 	/**

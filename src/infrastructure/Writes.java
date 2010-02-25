@@ -18,6 +18,7 @@
 package infrastructure;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.bpel.model.ExtensibleElement;
@@ -26,7 +27,7 @@ import analysis.Utility;
 
 /**
  * The writer state for a certain activity in a certain state
- * @author Sebastian Breier
+ * @author yangyang Gao
  *
  */
 public class Writes {
@@ -56,6 +57,10 @@ public class Writes {
 	 */
 	private Placement place;
 	
+	public Writes() {
+		
+	}
+	
 	/**
 	 * Create a new writes tuple
 	 * @param p
@@ -75,28 +80,48 @@ public class Writes {
 		this.mbd = mbd;
 	}
 	
-	/**
-	 * Copy the data from the parent activity
-	 * See DIP-2726 p. 52 l. 6
-	 */
-	public void copyFromParent() {
-		if (place == null) {
-			return;
-		}
-		State myState = State.getInstance();
-		ExtensibleElement parent = Utility.getParent(place.getElement());
-		if (parent == null) {
-			return;
-		}
-		Placement parentPlacement = new Placement(parent, InOut.IN);
-		Writes parentWritesIn = myState.getWrites(parentPlacement);
-		Set<ExtensibleElement> possParent = new HashSet<ExtensibleElement>(parentWritesIn.getPoss());
-		Set<ExtensibleElement> invParent = new HashSet<ExtensibleElement>(parentWritesIn.getInv());
-		boolean mbdParent = parentWritesIn.isMbd();
-		setPoss(possParent);
-		clearDis();
-		setInv(invParent);
-		setMbd(mbdParent);
+	public Writes(Placement p, Set<ExtensibleElement> poss, Set<ExtensibleElement> dis, Set<ExtensibleElement> inv, boolean mbd) {
+		this(poss,dis,inv,mbd);
+		place = p;
+	}
+
+	public Placement getPlacement() {
+		return place;
+	}
+	
+//	/**
+//	 * Copy the data from the parent activity
+//	 * See DIP-2726 p. 52 l. 6
+//	 */
+//	public void copyFromParent() {
+//		if (place == null) {
+//			return;
+//		}
+//		State myState = State.getInstance();
+//		ExtensibleElement parent = Utility.getParent(place.getElement());
+//		if (parent == null) {
+//			return;
+//		}
+//		Placement parentPlacement = new Placement(parent, InOut.IN);
+//		Writes parentWritesIn = myState.getWrites(parentPlacement);
+//		Set<ExtensibleElement> possParent = new HashSet<ExtensibleElement>(parentWritesIn.getPoss());
+//		Set<ExtensibleElement> invParent = new HashSet<ExtensibleElement>(parentWritesIn.getInv());
+//		boolean mbdParent = parentWritesIn.isMbd();
+//		setPoss(possParent);
+//		clearDis();
+//		setInv(invParent);
+//		setMbd(mbdParent);
+//	}
+//	
+	public void copyData(Writes w) {
+		this.poss.addAll(w.getPoss());
+		this.dis.addAll(w.getDis());
+		this.inv.addAll(w.getInv());
+		this.mbd = w.isMbd();
+	}
+
+	private void clearPoss() {
+		poss = new HashSet<ExtensibleElement>();		
 	}
 
 	/**
@@ -111,6 +136,13 @@ public class Writes {
 	 */
 	public void clearInv() {
 		setInv(new HashSet<ExtensibleElement>());
+	}
+	
+	public void clear() {
+		clearPoss();
+		clearDis();
+		clearInv();
+		this.mbd = false;
 	}
 
 	/**
@@ -190,13 +222,43 @@ public class Writes {
 		inv.addAll(i);
 		mbd = mbd || mbdState;
 	}
+	
+	private static String setToString(Set<ExtensibleElement> set) {
+		String res;
+		if (set.size() == 0)
+			return "[]";
+		
+		Iterator<ExtensibleElement> it = set.iterator();
+		ExtensibleElement e = it.next();
+		res = "[" + Utility.dumpEE(e);
+		
+		while (it.hasNext()) {
+			res = res + ", " + Utility.dumpEE(it.next());
+		}
+		
+		return res + "]"; 
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Writes @ " + place + ": poss = " + poss + ", dis = " + dis + ", inv = " + inv + ", mbd = " + mbd;
+		return "Writes @ " + place + ": poss = " + setToString(poss) + ", dis = " + setToString(dis) + ", inv = " + setToString(inv) + ", mbd = " + mbd;
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof Writes) {
+			Writes w = (Writes) o;
+			return (
+				this.poss.equals(w.getPoss()) &&
+				this.dis.equals(w.getDis()) &&
+				this.inv.equals(w.getInv()) &&
+				(this.mbd == w.mbd)
+				);
+		} else {
+			return false;
+		}
 	}
 	
 }

@@ -51,7 +51,16 @@ public class State {
 	/**
 	 * All variables to check
 	 */
-	private Map<String, Variable> vars = new HashMap<String, Variable>();
+	//private Map<String, VariableElement> vars = new HashMap<String, VariableElement>();
+	
+	/**
+	 * Returns the INTERNAL data structure to store all writes
+	 * NO copy is made
+	 * Use it at the END of the analysis ONLY!!!
+	 */
+	public Map<Placement, Writes> getAllWrites() {
+		return writes;
+	}
 	
 	/**
 	 * Return the Singleton instance or create one and return it
@@ -64,49 +73,7 @@ public class State {
 		return instance;
 	}
 	
-	/**
-	 * Get a variable by its name
-	 * @param variableName
-	 * @return
-	 */
-	public Variable getVariableByName(String variableName) {
-		if (vars.containsKey(variableName)) {
-			return vars.get(variableName);
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * Add a variable to the list
-	 * ID is of the form "parent.sub"
-	 * @param varID
-	 * @param var
-	 */
-	public void addVariable(String varID, Variable var) {
-		if (varID == null || var == null) {
-			return;
-		}
-		vars.put(varID, var);
-	}
-	
-	/**
-	 * Print out the variables saved
-	 */
-	public void dumpVariables() {
-		for (Map.Entry<String, Variable> entry: vars.entrySet()) {
-			System.out.println("ID: " + entry.getKey() + ", Variable: " + entry.getValue());
-		}
-	}
-	
-	/**
-	 * Return a collection of all saved variables
-	 * Good for iteration
-	 * @return
-	 */
-	public Collection<Variable> getVariables() {
-		return vars.values();
-	}
+
 	
 	/**
 	 * Clear the state by deleting the State instance reference
@@ -156,7 +123,7 @@ public class State {
 	}
 	
 	/**
-	 * Check if an activity is in "started" state
+	 * Check if an activity is in "finished" state
 	 * @param act
 	 * @return
 	 */
@@ -204,5 +171,5 @@ public class State {
 			return writes.get(p);
 		}
 	}
-	
+
 }

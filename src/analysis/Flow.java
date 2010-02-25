@@ -17,7 +17,11 @@
  */
 package analysis;
 
-import infrastructure.Variable;
+import infrastructure.InOut;
+import infrastructure.Placement;
+import infrastructure.State;
+import infrastructure.VariableElement;
+import infrastructure.Writes;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +35,7 @@ import org.eclipse.emf.common.util.EList;
 /**
  * Flow analysis
  * HandleFlow / HandleEndOfFlow
- * @author Sebastian Breier
+ * @author yangyang Gao
  *
  */
 public class Flow {
@@ -42,7 +46,7 @@ public class Flow {
 	 * @param element
 	 * @param variableElement
 	 */
-	public static void HandleFlow(org.eclipse.bpel.model.Flow flowActivity, Variable variableElement) {
+	public static void HandleFlow(org.eclipse.bpel.model.Flow flowActivity, String variableElement) {
 //		System.err.println(">HandleFlow: element = " + Utility.dumpEE(flowActivity) + ", variableElement = " + variableElement);
 		Set<org.eclipse.bpel.model.Activity> roots = findRoots(flowActivity);
 		for (org.eclipse.bpel.model.Activity containedActivity: roots) {
@@ -88,8 +92,59 @@ public class Flow {
 	 * @param flowElement
 	 * @param variableElement
 	 */
-	public static void HandleEndOfFlow(org.eclipse.bpel.model.Flow flowActivity, Variable variableElement) {
-		System.err.println(">HandleEndOfFlow STUB: element = " + Utility.dumpEE(flowActivity) + ", variableElement = " + variableElement);
+	public static void HandleEndOfFlow(org.eclipse.bpel.model.Flow flowActivity, String variableElement) {
+		System.err.println(">HandleEndOfFlow: element = " + Utility.dumpEE(flowActivity) + ", variableElement = " + variableElement);
+		Set<org.eclipse.bpel.model.Activity> leaves = findLeaves(flowActivity);
+		boolean allFinished = true;
+		for (org.eclipse.bpel.model.Activity leaf : leaves) {
+			if (!State.getInstance().isFinished(leaf)) {
+				allFinished = false;
+				System.err.println("<HandleEndOfFlow: nothing to do yet");
+				return;
+			}
+		}
+		if (allFinished) {
+			State state = State.getInstance();
+			Writes writesOut = State.getInstance().getWrites(new Placement(flowActivity, InOut.OUT));
+			
+			// line 4
+			for (org.eclipse.bpel.model.Activity leaf : leaves) {
+				Writes leafData = state.getWrites(new Placement(leaf, InOut.OUT));
+				writesOut.copyData(leafData);
+			}
+			
+			Writes writesIn = state.getWrites(new Placement(flowActivity, InOut.IN));
+			Writes writesTmp = analysis.Activity.overWrite(writesIn, writesOut);
+			writesOut.copyData(writesTmp);
+			
+			Activity.handleSuccessors(flowActivity, variableElement);
+		}
+		System.err.println("<HandleEndOfFlow: element = " + Utility.dumpEE(flowActivity));
 	}
 	
+	private static Set<org.eclipse.bpel.model.Activity> findLeaves(org.eclipse.bpel.model.Flow flowActivity) {
+//		System.err.println(">findLeaves: flowActivity = " + Utility.dumpEE(flowActivity));
+		Set<org.eclipse.bpel.model.Activity> flowChildren = Utility.findChildrenAct((ExtensibleElement)flowActivity);
+		Set<org.eclipse.bpel.model.Activity> flowDescendants = Utility.findDescendantsAct((ExtensibleElement)flowActivity);
+		Set<org.eclipse.bpel.model.Activity> leaves = new HashSet<org.eclipse.bpel.model.Activity>();
+		for (org.eclipse.bpel.model.Activity flowChild: flowChildren) {
+			boolean sourceInFlow = false;
+			EList<Source> sources = Utility.getSourceLinks(flowChild);
+			for (Source source: sources) {
+				Link link = source.getLink();
+				EList<Target> linkTargets = link.getTargets();
+				for (Target linkTarget: linkTargets) {
+					org.eclipse.bpel.model.Activity targetActivity = linkTarget.getActivity();
+					if (flowDescendants.contains(targetActivity)) {
+						sourceInFlow = true;
+						break;
+					}
+				}
+			}
+			if (!sourceInFlow) {
+				leaves.add(flowChild);
+			}
+		}
+		return leaves;
+	}
 }

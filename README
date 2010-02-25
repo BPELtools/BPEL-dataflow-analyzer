@@ -1,16 +1,24 @@
 BPELDataFlowAnalyzer
 --------------------
+This program implements a data flow analysis algorithm on BPEL processes.
 
-Version: 0.1 2008-08-04
-Author: Sebastian Breier
-License: Apache License 2.0
-E-mail: Sebastian.Breier@gmx.net
+The fundamentals of the algorithm are described in:
+Kopp, Oliver; Khalaf, Rania; Leymann, Frank: Deriving Explicit Data Links in WS-BPEL Processes. In: Proceedings of the International Conference on Services Computing, SCC 2008
 
-This program implements a data flow analysis algorithm on BPEL processes as described in diploma
-thesis DIP-2726 (Uni Stuttgart), retrievable from
-http://www.informatik.uni-stuttgart.de/cgi-bin/NCSTRL/NCSTRL_view.pl?id=DIP-2726&mod=0&hi=32373236.
+The algorithm has been extended by Sebastian Breier in the diploma thesis DIP-2726 at University of Stuttgart. Retrievable from
+http://www2.informatik.uni-stuttgart.de/cgi-bin/NCSTRL/NCSTRL_view.pl?id=DIP-2726&eng=1
 
+The implementation has been extended by Gao Yangyang in the student thesis STUD-2246 at University of Stuttgart. Retrievable from
+http://www2.informatik.uni-stuttgart.de/cgi-bin/NCSTRL/NCSTRL_view.pl?id=STUD-2246&engl=1
+
+The theses have been supervised by Oliver Kopp.
+
+See http://www.iaas.uni-stuttgart.de/ for links on the paper and theses.
+
+Copyright
+---------
    Copyright 2008 Sebastian Breier
+   Copyright 2010 Gao Yangyang
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -24,6 +32,19 @@ http://www.informatik.uni-stuttgart.de/cgi-bin/NCSTRL/NCSTRL_view.pl?id=DIP-2726
    See the License for the specific language governing permissions and
    limitations under the License.
 
+Released Versions
+-----------------
+Version: 0.2 2010-02-25
+Author: Gao Yangyang
+License: Apache License 2.0
+E-mail: jigong_liang@hotmail.com
+
+Version: 0.1 2008-08-04
+Author: Sebastian Breier
+License: Apache License 2.0
+E-mail: Sebastian.Breier@gmx.net
+
+   
 Introduction
 ------------
 You should definitely read DIP-2726 to understand the purpose and internal working of the program.
@@ -33,60 +54,7 @@ processes.
 This README will explain how to use the software and how to build and extend it yourself.
 
 Unfortunately, the software has some limitations and is still unfinished.
-(Most activity types are not yet supported, STUB methods are unfinished)
-
-This program depends on:
-- Java 6
-- org.eclipse.bpel.model v20070824_M3
-(Which depends on - org.eclipse.bpel.common.model v20070824_M3
-                  - org.eclipse.bpel.common.ui v20070824_M3)
-- org.eclipse.emf.common 2.3.2.v200802051830
-- org.eclipse.emf.ecore 2.3.2.v200802051830
-- org.eclipse.wst.wsdl 1.1.101.v200801152132
-- org.eclipse.emf.ecore.xml 2.3.2.v200802051830
-Usage with other libraries and/or versions may fail or vary your experience. :)
-
-Use it
-------
-Because of the dependency on the Eclipse BPEL project, this program will only run in Eclipse.
-There are probably ways of running it without Eclipse, but so far I have not found out how.
-1. Install Eclipse Europa Winter (aka version 3.3.2) JEE version
-2. Pull the source for Eclipse BPEL
-  See http://www.eclipse.org/bpel/install.php on how to do this.
-  Basically, connect to :pserver:anonymous@dev.eclipse.org:/cvsroot/technology,
-  check out from org.eclipse.bpel/plugins:
-  - org.eclipse.bpel.common.ui
-  - org.eclipse.bpel.model
-  - org.eclipse.bpel.common.model
-  DO NOT check out the HEAD revisions.
-  Check out the branch/revision for v20070824_M3, milestone M3 or just "version 0.3".
-  HEAD revisions might somehow work, but I have not tried.
-3. Import the BPELDataFlowAnalyzer project into Eclipse.
-4. Edit the Build Path of BPELDataFlowAnalyzer.
-  Add the checked out parts of Eclipse BPEL project.
-  Add the org.eclipse.emf.* and org.eclipse.wst.wsdl dependencies as described above.
-  The JAR files can be found in the eclipse/plugins directory.
-5. Edit "Analyzer.java" method "main" to contain the right paths and file names to your BPEL process
-  and the variable list file. 
-6. Edit the variable list file to contain a list of the variables to analyze.
-7. Run "Analyzer.java" as Java application.
-
-Restrictions
-------------
-So far, the only things implemented are:
-- Most parts of the infrastructure (sets, tuples, flags, ...)
-- HandleActivity (without sequences, only for basic activities, process & flow activities)
-- MergeData (without sequence, no join condition analysis at all)
-- PurgeDuplicatesOR
-- HandleBasicActivity analysis (but only general & receive activities)
-- HandleFlow activity analysis (without HandleEndOfFlow)
-- AnalyzeProcessModel
-
-Not implemented are:
-- Any join condition / expression analysis
-- HandleSuccessors
-- overWrite
-- Many activity handlers
+However, most activity types are supported.
 
 Extend it
 ---------
@@ -122,7 +90,3 @@ analysis.Utility contains several interesting utility methods:
 
 Most methods contain a debug line that gets printed when they are called.
 Some are commented out, some (especially STUBs) are not.
-
-Conclusion
-----------
-While the program is not complete yet, I believe it has a viable structure for future development.

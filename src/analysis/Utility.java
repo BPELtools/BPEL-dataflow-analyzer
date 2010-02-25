@@ -18,34 +18,65 @@
 package analysis;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.bpel.model.*;
 import org.eclipse.bpel.model.Activity;
-import org.eclipse.bpel.model.Condition;
-import org.eclipse.bpel.model.ExtensibleElement;
-import org.eclipse.bpel.model.Target;
-import org.eclipse.bpel.model.Targets;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.w3c.dom.Element;
 
 /**
  * Utility functions
- * @author Sebastian Breier
+ * @author yangyang Gao
  *
  */
 public class Utility {
+	
 	/**
 	 * Find the parent element
 	 * @param element
 	 */
-	public static ExtensibleElement getParent(ExtensibleElement element) {
+	public static ExtensibleElement getParent(EObject element) {
 		if (element == null) {
 			return null;
 		}
+		
 		EObject containerObject = element.eContainer();
-		if (!(containerObject instanceof ExtensibleElement)) {
+		if (containerObject == null)
+			return null;
+		
+		// EventHandler FaultHandler TerminationHandler
+		
+		if (!(containerObject instanceof Activity) &&
+			!(containerObject instanceof org.eclipse.bpel.model.Process ) &&
+			!(containerObject instanceof OnAlarm) &&
+			!(containerObject instanceof OnEvent) &&
+			!(containerObject instanceof OnMessage) &&
+			!(containerObject instanceof ElseIf) &&
+			!(containerObject instanceof Else) &&
+			!(containerObject instanceof Catch) &&
+			!(containerObject instanceof CatchAll) &&
+			!(containerObject instanceof TerminationHandler) ) {
+			return getParent(containerObject);
+		}
+		return (ExtensibleElement)containerObject;
+	}
+
+	/**
+	 * Find the predecessor element
+	 * @param element
+	 */
+	public static ExtensibleElement getPredecessor(ExtensibleElement element) {
+		if (element == null){
+			return null;
+		}
+		EObject containerObject = element.eContainer();
+		if(!(containerObject instanceof ExtensibleElement)){
 			return null;
 		}
 		return (ExtensibleElement)containerObject;
@@ -87,20 +118,39 @@ public class Utility {
 		}
 		return children;
 	}
-	
+
 	/**
 	 * Retrieve the join condition of an ExtensibleElement
 	 * Might be "null"
 	 * @param element
 	 * @return
 	 */
-	public static Condition getJoinCondition(ExtensibleElement element) {
+	public static String getJoinCondition(ExtensibleElement element) {
 		Targets t = getTargets(element);
 		if (t == null) {
 			return null;
 		}
-		return t.getJoinCondition();
+		Condition c = t.getJoinCondition();
+		if (c == null)
+			return null;
+		
+		// TODO check whether it's really "getBody()"
+		String res = c.getBody().toString();
+		return res;		
 	}
+	
+	public static String getTransitionCondition(Link link) {
+		EList<Source> sources = link.getSources();
+		Source s = sources.get(0);
+		Condition c = s.getTransitionCondition();
+		if (c == null)
+			return null;
+		
+		// TODO check whether it's really "getBody()" - see also getJoinCondition
+		String res = c.getBody().toString();
+		return res;		
+	}
+
 	
 	/**
 	 * Retrieve the targets of an ExtensibleElement
@@ -114,7 +164,33 @@ public class Utility {
 		org.eclipse.bpel.model.Activity act = (org.eclipse.bpel.model.Activity)element;
 		return act.getTargets();
 	}
+	
+	public static EList<Source> getSourceLinks(ExtensibleElement el) {
+		EList<Source> emptyList = new BasicEList<Source>();
+		Sources s = getSources(el);
+		if (s == null) {
+			return emptyList;
+		}
+		EList<Source> children = s.getChildren();
+		if (children == null) {
+			return emptyList;
+		}
+		return children;
+	}
 
+
+	/*
+	 * wie getTagets
+	 */
+	private static Sources getSources(ExtensibleElement flowChild) {
+		if (!(flowChild instanceof org.eclipse.bpel.model.Activity)) {
+			return null;
+		}
+		org.eclipse.bpel.model.Activity act = (org.eclipse.bpel.model.Activity)flowChild;
+		return act.getSources();
+	}
+	
+	
 	/**
 	 * Find all directly contained children of an ExtensibleElement
 	 * @param activity
@@ -171,17 +247,20 @@ public class Utility {
 	 * @return
 	 */
 	public static String dumpEE(ExtensibleElement activity) {
+		if (activity == null)
+			return "null";
 		if (activity instanceof org.eclipse.bpel.model.Process) {
 			return "Process";
 		}
-		if (activity instanceof Activity) {
-			Activity act = (Activity)activity;
+		if (activity instanceof org.eclipse.bpel.model.Activity) {
+			org.eclipse.bpel.model.Activity act = (org.eclipse.bpel.model.Activity)activity;
 			String activityName = act.getName();
 			if (activityName != null && !activityName.equals("")) {
 				return "Activity " + activityName;
 			}
 		}
-		return activity.getElement().getNodeName();
+		Element e = activity.getElement(); 
+		return e.getNodeName();
 	}
 	
 	/**
@@ -216,5 +295,112 @@ public class Utility {
 	public static Set<Activity> findDescendantsAct(ExtensibleElement activity) {
 		return filterActivities(findDescendantsEE(activity));
 	}
+	
+	private static void localToScopeEEs(ExtensibleElement el,
+			Set<org.eclipse.bpel.model.Activity> noScopes,
+			Set<org.eclipse.bpel.model.Activity> scopes) {
+	
+		if (el instanceof Scope) {
+			scopes.add((Scope) el);
+			return;
+		} else if (el instanceof Activity) {
+			
+		}
+		
+		EList<EObject> containedObjects = el.eContents();
+		for (EObject containedObject: containedObjects) {
+			if (containedObject instanceof ExtensibleElement) {
+				localToScopeEEs((ExtensibleElement) containedObject, noScopes, scopes);
+			}
+		}
+
+	}
+	
+	/**
+	 * 
+	 * @param act
+	 * @param noScopes - set to store the found descendants local to scope - has to be initialized 
+	 * @param scopes - set for storing the descendants local to scope - has to be initialized
+	 */
+	public static void localToScopeActivities(org.eclipse.bpel.model.Activity act,
+			Set<org.eclipse.bpel.model.Activity> noScopes,
+			Set<org.eclipse.bpel.model.Scope> scopes) {
+		
+		if (act instanceof Scope) {
+			scopes.add((Scope) act);
+			return;
+		} 
+		
+		noScopes.add(act);
+		
+		if (act instanceof While) {
+			localToScopeActivities(((While) act).getActivity(), noScopes, scopes);
+		} else if (act instanceof RepeatUntil) {
+			localToScopeActivities(((RepeatUntil) act).getActivity(), noScopes, scopes);
+		} else if (act instanceof ForEach) {
+			localToScopeActivities(((ForEach) act).getActivity(), noScopes, scopes);
+		} else if (act instanceof Sequence) {
+			Sequence s = (Sequence) act;
+			EList<Activity> acts = s.getActivities();
+			for (Activity a: acts) {
+				localToScopeActivities(a, noScopes, scopes);	
+			}
+		} else if (act instanceof org.eclipse.bpel.model.Flow) {
+			org.eclipse.bpel.model.Flow f = (org.eclipse.bpel.model.Flow) act;
+			EList<Activity> acts = f.getActivities();
+			for (Activity a: acts) {
+				localToScopeActivities(a, noScopes, scopes);	
+			}			
+		} else if (act instanceof Pick) {
+			Pick pick = (Pick) act;
+			EList<OnAlarm> alarms = pick.getAlarm();
+			for (OnAlarm o: alarms) {
+				noScopes.add(o.getActivity());
+				localToScopeActivities(o.getActivity(), noScopes, scopes);
+			}
+			EList<OnMessage> messages = pick.getMessages();
+			for (OnMessage m: messages) {
+				noScopes.add(m.getActivity());
+				localToScopeActivities(m.getActivity(), noScopes, scopes);
+			}
+		} else {
+			// basic activities
+			// nothing to do in this case!
+			// recursion stopped
+		}
+	}
+	
+	public static ExtensibleElement getSharedParent(
+			ExtensibleElement source, ExtensibleElement target) {
+		// store all parents of the source in a list
+		List<ExtensibleElement> l = new ArrayList<ExtensibleElement>();
+		ExtensibleElement p = Utility.getParent(source);
+		while (!(p instanceof org.eclipse.bpel.model.Process)) {
+			l.add(p);
+			p = getParent(p);
+		}
+		l.add(p);
+		
+		// traverse parents of target
+		// first hit is the shared parent
+		p = Utility.getParent(target);
+		while (!l.contains(p)) {
+			p = getParent(p);
+		}
+		
+		return p;
+	}
+	/**
+	 * @param nameSuperElement  
+	 * @param nameSubElement
+	 * @return true iff nameSubElement is a REAL subelement of nameSuperElement
+	 */
+	public static boolean subElement(String nameSuperElement, String nameSubElement){
+		boolean moreLength = (nameSubElement.length() >= nameSuperElement.length());
+		boolean startsWith = (nameSubElement.startsWith(nameSuperElement)); 
+		return (moreLength && startsWith);
+	}
+	
+	
 
 }
