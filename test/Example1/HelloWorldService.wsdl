@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="HelloWorldService" targetNamespace="http://www.se.uni-hannover.de/soa08/tutorial/HelloWorldService" xmlns:hws="http://www.se.uni-hannover.de/soa08/tutorial/HelloWorldService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.se.uni-hannover.de/soa08/tutorial/HelloWorldService">
+			<xsd:element name="getMessageResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="message" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="getMessageResponse">
+    <wsdl:part name="parameters" element="hws:getMessageResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getMessageRequest">
+  </wsdl:message>
+  <wsdl:portType name="HelloWorldServicePortType">
+    <wsdl:operation name="getMessage">
+      <wsdl:input message="hws:getMessageRequest">
+    </wsdl:input>
+      <wsdl:output message="hws:getMessageResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="HWS-SOAP-Binding" type="hws:HelloWorldServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getMessage">
+      <soap:operation soapAction="getMessage"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="HelloWorldService">
+    <wsdl:port name="HelloWorldServicePort" binding="hws:HWS-SOAP-Binding">
+      <soap:address location="http://hobbes.se.uni-hannover.de:8080/HelloWorldServices/services/HelloWorldService/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

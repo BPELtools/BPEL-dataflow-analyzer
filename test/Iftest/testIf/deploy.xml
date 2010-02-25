@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" xmlns:DynamicInvokeProcess="http://www.se.uni-hannover.de/soa08/tutorial/DynamicInvokeProcess" xmlns:HelloWorldService="http://www.se.uni-hannover.de/soa08/tutorial/HelloWorldService">
+  <process name="DynamicInvokeProcess:DynamicInvokeProcess">
+    <process-events generate="all"/>
+    <provide partnerLink="client">
+      <service name="DynamicInvokeProcess:MultilingualHelloWorld" port="MultilingualHelloWorldPort"/>
+    </provide>
+    <invoke partnerLink="HelloWorldServicePartnerLink">
+      <service name="HelloWorldService:HelloWorldService" port="HelloWorldServicePort"/>
+    </invoke>
+  </process>
+</deploy>

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<definitions name="MotivatingExample"
+        targetNamespace="http://www.gao.com/exampleNS"
+        xmlns:tns="http://www.gao.com/exampleNS"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        >
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of types participating in this BPEL process 
+     The BPEL Designer will generate default request and response types
+     but you can define or import any XML Schema type and use them as part 
+     of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <types>
+        <schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+                targetNamespace="http://www.gao.com/exampleNS" 
+                xmlns="http://www.w3.org/2001/XMLSchema">
+
+            <element name="MotivatingExampleRequest">
+                <complexType>
+                    <sequence>
+                        <element name=amt" type="string"/>
+                        <element name=actNum" type="string"/>
+                        <element name=text" type="string"/>
+                        <element name=orderStatus" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="MotivatingExampleResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </types>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="MotivatingExampleRequestMessage">
+        <part name="payload" element="tns:MotivatingExampleRequest"/>
+    </message>
+    <message name="MotivatingExampleResponseMessage">
+        <part name="payload" element="tns:MotivatingExampleResponse"/>
+    </message>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+
+    <!-- portType implemented by the MotivatingExample BPEL process -->
+    <portType name="MotivatingExample">
+        <operation name="process">
+            <input  message="tns:MotivatingExampleRequestMessage" />
+            <output message="tns:MotivatingExampleResponseMessage"/>
+        </operation>
+    </portType>
+  
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="MotivatingExample">
+        <plnk:role name="MotivatingExampleProvider" portType="tns:MotivatingExample"/>
+    </plnk:partnerLinkType>
+    
+</definitions>
