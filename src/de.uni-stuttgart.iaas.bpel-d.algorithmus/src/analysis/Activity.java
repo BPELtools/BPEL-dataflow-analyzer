@@ -416,11 +416,9 @@ public class Activity {
 
 	/**
 	 * Check if join condition is a logical AND over all incoming links
-	 * FIXME: STUB!
-	 * @param element
-	 * @return
+     *
+	 * @param activity
 	 */
-
 	private static boolean jcIsLogicalAnd(org.eclipse.bpel.model.Activity activity) {
 		JoinVariableResolver jvr = new JoinVariableResolver();
 		XPathFactory factory = XPathFactory.newInstance();
@@ -455,19 +453,17 @@ public class Activity {
 				return false;
 			}
 	}
-
+	
 	/**
-	 * Check if the ONLY incoming link is negated - activity has only ONE incoming link
-	 * @param el
-	 * @return
+	 * Check whether the given join condition negates the incoming link
+	 *  
+	 * @pre activity has only one incoming link
+	 * @note public because a JUnit test tests this method
 	 */
-	private static boolean negatesLinkStatus(/*String jc*/org.eclipse.bpel.model.Activity activity) {
-		System.err.println(">negatesLinkStatus STUB: el = " + Utility.dumpEE(activity));
-		
+	public static boolean negatesLinkStatus(String jc) {
 		JoinVariableResolver jvr = new JoinVariableResolver();
 		XPathFactory factory = XPathFactory.newInstance();
 		try {
-			String jc = Utility.getJoinCondition(activity);
 			if (jc==null) return false;
 			jvr.init(jc);
 
@@ -498,6 +494,19 @@ public class Activity {
 			return false;
 		}
 	}
+
+	/**
+	 * Check if the ONLY incoming link is negated 
+	 * precondition: activity has only ONE incoming link
+	 * 
+	 * @param activity
+	 */
+	private static boolean negatesLinkStatus(org.eclipse.bpel.model.Activity activity) {
+		System.err.println(">negatesLinkStatus STUB: el = " + Utility.dumpEE(activity));
+		String jc = Utility.getJoinCondition(activity);
+		return negatesLinkStatus(jc);
+	}
+		
 
 	/**
 	 * Check if act has only one incoming link
