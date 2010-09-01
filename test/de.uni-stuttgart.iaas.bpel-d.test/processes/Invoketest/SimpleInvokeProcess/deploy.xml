@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" xmlns:SimpleInvokeProcess="http://www.se.uni-hannover.de/soa08/tutorial/SimpleInvokeProcess" xmlns:randomHelloService.tutorial.soa08.se.unihannover.de="http://randomHelloService.tutorial.soa08.se.unihannover.de">
+  <process name="SimpleInvokeProcess:SimpleInvokeProcess">
+    <process-events generate="all"/>
+    <provide partnerLink="client">
+      <service name="SimpleInvokeProcess:SimpleInvokeService" port="SimpleInvokePort"/>
+    </provide>
+    <invoke partnerLink="RandomHelloPL">
+      <service name="randomHelloService.tutorial.soa08.se.unihannover.de:RandomHelloServiceService" port="RandomHelloService"/>
+    </invoke>
+  </process>
+</deploy>
