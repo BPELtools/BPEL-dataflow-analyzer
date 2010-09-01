@@ -5,5 +5,6 @@ Bundle-SymbolicName: de.uni_stuttgart.iaas.bpel_d.test
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uni-stuttgart.iaas.bpel-d.algorithmus;bundle-version="1.0.0",
- org.junit4
+ org.junit4,
+ org.eclipse.bpel.model;bundle-version="0.5.0"
 Import-Package: analysis
