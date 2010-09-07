@@ -13,7 +13,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.common.util.URI;
 import org.grlea.log.SimpleLogger;
 
-import analysis.AnalysisResult;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.AnalysisResult;
+
 
 public class Start implements IApplication {
 
@@ -31,7 +32,7 @@ public class Start implements IApplication {
 			bpel_resource.load(null);
 			org.eclipse.bpel.model.Process process = bpel_resource.getProcess();
 
-			AnalysisResult res = analysis.Process.analyzeProcessModel(process);
+			AnalysisResult res = de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Process.analyzeProcessModel(process);
 
 			res.output();
 		} catch (Exception e) {

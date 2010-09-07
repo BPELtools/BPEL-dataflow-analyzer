@@ -15,13 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package analysis;
+package de.uni_stuttgart.iaas.bpel_d.algorithm.analysis;
 
-import infrastructure.InOut;
-import infrastructure.Placement;
-import infrastructure.State;
-import infrastructure.VariableElement;
-import infrastructure.Writes;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -60,6 +55,12 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.wst.wsdl.Part;
 import org.grlea.log.SimpleLogger;
 
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.InOut;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Placement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.State;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.VariableElement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Writes;
+
 /**
  * Analysis of basic activities
  * @author yangyang Gao
@@ -89,7 +90,7 @@ public class Basic {
 		if (activityWrites) {
 			Writes writesTmp = new Writes(new Placement(activity, InOut.TEMP));
 			writesTmp.getPoss().add(activity);
-			Writes tmpOut = analysis.Activity.overWrite(writesIn, writesTmp);
+			Writes tmpOut = de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Activity.overWrite(writesIn, writesTmp);
 			writesOut.clear();
 			writesOut.copyData(tmpOut);
 			
@@ -107,7 +108,7 @@ public class Basic {
 		
 		logger.exit("handleBasicActivity");
 		logger.debugObject("writesOut", writesOut);
-		analysis.Activity.handleSuccessors(activity, variableElement);
+		de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Activity.handleSuccessors(activity, variableElement);
 	}
 
 	/**

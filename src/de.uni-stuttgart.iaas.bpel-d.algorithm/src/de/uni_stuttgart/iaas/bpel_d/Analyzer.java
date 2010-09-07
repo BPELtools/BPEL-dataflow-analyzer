@@ -1,9 +1,4 @@
 package de.uni_stuttgart.iaas.bpel_d;
-import infrastructure.InOut;
-import infrastructure.Placement;
-import infrastructure.State;
-import infrastructure.VariableElement;
-import infrastructure.Writes;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -24,7 +19,13 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.grlea.log.DebugLevel;
 import org.grlea.log.SimpleLogger;
 
-import analysis.AnalysisResult;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.AnalysisResult;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.InOut;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Placement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.State;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.VariableElement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Writes;
+
 
 /**
  * Data flow analyzer startup code
@@ -73,7 +74,7 @@ public class Analyzer implements IApplication {
 //		State.clearState();
 		
 //		State.getInstance().dumpVariables();
-		AnalysisResult res = analysis.Process.analyzeProcessModel(process);
+		AnalysisResult res = de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Process.analyzeProcessModel(process);
 		res.output();
 		
 		//TODO: output State as BPEL-D?!
@@ -127,7 +128,7 @@ public class Analyzer implements IApplication {
 			bpel_resource.load(null);
 			org.eclipse.bpel.model.Process process = bpel_resource.getProcess();
 
-			AnalysisResult res = analysis.Process.analyzeProcessModel(process);
+			AnalysisResult res = de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Process.analyzeProcessModel(process);
 
 			res.output();
 

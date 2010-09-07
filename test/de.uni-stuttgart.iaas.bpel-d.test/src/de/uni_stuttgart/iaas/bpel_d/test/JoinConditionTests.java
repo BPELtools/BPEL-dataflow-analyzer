@@ -11,7 +11,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import analysis.Activity;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Activity;
+
 
 /**
  * @author gao

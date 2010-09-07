@@ -15,11 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package infrastructure;
+package de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure;
 
 import org.eclipse.bpel.model.ExtensibleElement;
 
-import analysis.Utility;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Utility;
+
 
 /**
  * Relationship Activity <-> In/Out/Temp

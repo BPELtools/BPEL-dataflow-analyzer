@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package analysis;
+package de.uni_stuttgart.iaas.bpel_d.algorithm.analysis;
 
 import java.io.StringWriter;
 import java.util.ArrayList;

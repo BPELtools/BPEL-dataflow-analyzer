@@ -1,8 +1,5 @@
-package analysis;
+package de.uni_stuttgart.iaas.bpel_d.algorithm.analysis;
 
-import infrastructure.InOut;
-import infrastructure.Placement;
-import infrastructure.Writes;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +10,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.bpel.model.Activity;
+
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.InOut;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Placement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Writes;
 
 public class AnalysisResult {
 

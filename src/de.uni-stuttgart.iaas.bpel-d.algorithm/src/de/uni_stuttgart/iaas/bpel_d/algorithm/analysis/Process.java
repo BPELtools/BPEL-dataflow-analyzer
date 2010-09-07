@@ -16,13 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package analysis;
+package de.uni_stuttgart.iaas.bpel_d.algorithm.analysis;
 
-import infrastructure.InOut;
-import infrastructure.Placement;
-import infrastructure.State;
-import infrastructure.VariableElement;
-import infrastructure.Writes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,6 +65,12 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.wst.wsdl.Part;
 import org.grlea.log.SimpleLogger;
+
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.InOut;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Placement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.State;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.VariableElement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Writes;
 
 /**
  * Code for analysis of Process elements
@@ -119,7 +120,7 @@ public class Process {
 		State myState = State.getInstance();
 		myState.clearWrites();
 		myState.clearFlags();
-		analysis.Activity.handleActivity(process, variableElement);
+		de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Activity.handleActivity(process, variableElement);
 		Map<Placement, Writes> writesFunction = myState.getAllWrites();
 
 		logger.exit("analyzeVariableElement");

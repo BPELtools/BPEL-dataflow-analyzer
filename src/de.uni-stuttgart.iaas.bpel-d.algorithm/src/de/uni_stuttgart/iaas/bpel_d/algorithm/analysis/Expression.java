@@ -1,5 +1,5 @@
 /**
- * Placement Options
+ * Classes for analyzing expressions in BPEL
  * 
  * Copyright 2008 Sebastian Breier
  *
@@ -15,13 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package infrastructure;
+package de.uni_stuttgart.iaas.bpel_d.algorithm.analysis;
 
 /**
- * Options for placement near an activity
+ * Analyze expressions
  * @author Sebastian Breier
  *
  */
-public enum InOut {
-	IN, OUT, TEMP;
+public class Expression {
+
+	/* -- currently not used --
+	public static boolean containsNot(Expression exp) {
+		// FIXME: No idea what conditions/expressions look like right now
+		System.err.println(">containsNot STUB: exp: " + exp);
+		return false;
+	}
+	*/
+	
 }

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: BPEL Data Flow Analyzer: Algorithm Plugin
 Bundle-SymbolicName: de.uni-stuttgart.iaas.bpel-d.algorithm;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: de.uni_stuttgart.iaas.bpel_d.algorithmus.Activator
+Bundle-Activator: de.uni_stuttgart.iaas.bpel_d.algorithm.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.bpel.model;bundle-version="0.4.0";visibility:=reexport,
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide.application;bundle-version="1.0.200"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: analysis,
+Export-Package: de.uni_stuttgart.iaas.bpel_d.algorithm.analysis,
  org.grlea.log
 Bundle-ClassPath: jars/simple-log.jar,
  .

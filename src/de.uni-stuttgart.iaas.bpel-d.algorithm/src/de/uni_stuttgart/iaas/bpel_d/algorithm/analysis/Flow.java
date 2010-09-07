@@ -16,13 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package analysis;
+package de.uni_stuttgart.iaas.bpel_d.algorithm.analysis;
 
-import infrastructure.InOut;
-import infrastructure.Placement;
-import infrastructure.State;
-import infrastructure.VariableElement;
-import infrastructure.Writes;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +28,12 @@ import org.eclipse.bpel.model.Source;
 import org.eclipse.bpel.model.Target;
 import org.eclipse.emf.common.util.EList;
 import org.grlea.log.SimpleLogger;
+
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.InOut;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Placement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.State;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.VariableElement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Writes;
 
 /**
  * Flow analysis
@@ -119,7 +120,7 @@ public class Flow {
 			}
 			
 			Writes writesIn = state.getWrites(new Placement(flowActivity, InOut.IN));
-			Writes writesTmp = analysis.Activity.overWrite(writesIn, writesOut);
+			Writes writesTmp = de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Activity.overWrite(writesIn, writesOut);
 			writesOut.copyData(writesTmp);
 			
 			Activity.handleSuccessors(flowActivity, variableElement);

@@ -16,14 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package analysis;
+package de.uni_stuttgart.iaas.bpel_d.algorithm.analysis;
 
-import analysis.JoinVariableResolver;
-import infrastructure.InOut;
-import infrastructure.Placement;
-import infrastructure.State;
-import infrastructure.VariableElement;
-import infrastructure.Writes;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +40,13 @@ import org.eclipse.emf.common.util.EList;
 import org.grlea.log.SimpleLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.JoinVariableResolver;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.InOut;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Placement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.State;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.VariableElement;
+import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Writes;
 
 /**
  * Class for HandleActivity and HandleSuccessors
@@ -101,7 +102,7 @@ public class Activity {
 		}
 		//line 20 to 21
 		else if (act instanceof Flow){
-			analysis.Flow.HandleFlow((Flow)act, ve);
+			de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Flow.HandleFlow((Flow)act, ve);
 		}
 		// line 22 to 23
 		else if(act instanceof Scope){
@@ -653,7 +654,7 @@ public class Activity {
 		// line 10 to 11
 		if (parent instanceof Flow) {
 			Flow flowActivity = (Flow) parent;
-			analysis.Flow.HandleEndOfFlow(flowActivity, variableElement);
+			de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Flow.HandleEndOfFlow(flowActivity, variableElement);
 		}
 		// line 12 to 13
 		else if (parent instanceof Sequence) {
@@ -825,7 +826,7 @@ public class Activity {
 					Writes w = State.getInstance().getWrites(new Placement(o, InOut.IN));
 					w.clear();
 					
-					if (analysis.Basic.doesWrite(o,ve)) {
+					if (de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Basic.doesWrite(o,ve)) {
 						// we assume that the returned Writes is (emptyset, emptyset, emptyset, false)
 						Writes writesTmpBranch = State.getInstance().getWrites(new Placement(o, InOut.TEMP));
 						writesTmpBranch.getPoss().add(o);
@@ -892,7 +893,7 @@ public class Activity {
 						new Placement(c, InOut.IN));
 				w.clear();
 				
-				if (analysis.Basic.doesWrite(c,variableElement)) {
+				if (de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Basic.doesWrite(c,variableElement)) {
 					// we assume that the returned Writes is (emptyset, emptyset, emptyset, false)
 					Writes writesTmpBranch = state.getWrites(new Placement(c, InOut.TEMP));
 					writesTmpBranch.getPoss().add(c);
@@ -1164,7 +1165,7 @@ public class Activity {
 			writesInBranch.getInv().addAll(WritesInPickActivity.getInv());
 			writesInBranch.setMbd(false);
 			
-			if (analysis.Basic.doesWrite(e,ve)) {
+			if (de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Basic.doesWrite(e,ve)) {
 				// we assume that the returned Writes is (emptyset, emptyset, emptyset, false)
 				Writes writesTmpBranch = state.getWrites(new Placement(e, InOut.TEMP));
 				writesTmpBranch.getPoss().add(e);
