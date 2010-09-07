@@ -58,6 +58,7 @@ import org.eclipse.bpel.model.impl.ToImpl;
 import org.eclipse.bpel.model.messageproperties.Property;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.wst.wsdl.Part;
+import org.grlea.log.SimpleLogger;
 
 /**
  * Analysis of basic activities
@@ -66,6 +67,8 @@ import org.eclipse.wst.wsdl.Part;
  */
 public class Basic {
 
+	private final static SimpleLogger logger = new SimpleLogger(Basic.class);
+
 	/**
 	 * Analyze basic activities
 	 * See DIP-2726 p. 64 algo 8
@@ -73,7 +76,10 @@ public class Basic {
 	 * @param variableElement
 	 */
 	public static void handleBasicActivity(org.eclipse.bpel.model.Activity activity, String variableElement) {
-		System.err.println(">handleBasicActivity: activity = " + Utility.dumpEE(activity) + ", ve = " + variableElement);
+		logger.entry("doesWriteReceive()");
+		logger.debugObject("act", Utility.dumpEE(activity));
+		logger.debugObject("ve", variableElement);
+
 		State myState = State.getInstance();
 		boolean activityWrites = doesWrite(activity, variableElement);
 		Placement basicActivityInPlacement = new Placement(activity, InOut.IN);
@@ -98,7 +104,9 @@ public class Basic {
 			writesOut.getInv().addAll(writesIn.getInv());
 			writesOut.setMbd(writesIn.isMbd());
 		}
-		System.err.println("<handleBasicActivity: writesOut = " + writesOut);
+		
+		logger.exit("handleBasicActivity");
+		logger.debugObject("writesOut", writesOut);
 		analysis.Activity.handleSuccessors(activity, variableElement);
 	}
 
@@ -111,7 +119,10 @@ public class Basic {
 	 * @return
 	 */
 	public static boolean doesWrite(ExtensibleElement ee, String variableElement) {
-		System.err.println(">doesWrite: extensibleElement = " + Utility.dumpEE(ee) + ", variableElement = " + variableElement);
+		logger.entry("doesWrite()");
+		logger.debugObject("act", Utility.dumpEE(ee));
+		logger.debugObject("ve", variableElement);
+
 		if (ee instanceof Receive) {
 			return doesWriteReceive((Receive)ee, variableElement);
 		} else if (ee instanceof Assign) {
@@ -263,19 +274,26 @@ public class Basic {
 	}
 
 	private static boolean doseWriteInvoke(Invoke ee, String variableElement) {
-		System.err.println(">doesWriteReceive: activity = " + Utility.dumpEE(ee) + ", variableElement = " + variableElement);
+		logger.entry("doesWriteInvoke()");
+		logger.debugObject("act", Utility.dumpEE(ee));
+		logger.debugObject("ve", variableElement);
+
 		org.eclipse.bpel.model.Variable invokeVar = ee.getOutputVariable();
 		if ( invokeVar!=null) {
-			if(Utility.subElement(invokeVar.getName(),variableElement))
+			if(Utility.subElement(invokeVar.getName(),variableElement)) {
+				logger.exit("doesWriteInvoke()");
 				return true;
+			}
 		}
 		FromParts fps = ee.getFromParts();
 		if (fps != null) {
 		for (FromPart fp : fps.getChildren()) {
 			org.eclipse.bpel.model.Variable v = fp.getToVariable();
 				if (v != null) {
-					if(Utility.subElement(v.getName(),variableElement))
-					return true;
+					if(Utility.subElement(v.getName(),variableElement)) {
+						logger.exit("doesWriteInvoke()");
+						return true;
+					}
 				}
 			}
 		}
@@ -284,11 +302,14 @@ public class Basic {
 			for (ToPart tp : tps.getChildren()) {
 				org.eclipse.bpel.model.Variable v = tp.getFromVariable();
 				if (v != null) {
-					if(Utility.subElement(v.getName(),variableElement))
+					if (Utility.subElement(v.getName(),variableElement)) {
+						logger.exit("doesWriteInvoke()");
 						return true;
+					}
 				}
 			}
 		}
+		logger.exit("doesWriteInvoke()");
 		return false;
 	}
 
@@ -307,14 +328,15 @@ public class Basic {
 				} else {
 					String name = var.getName();
 					
-					ToImpl toImpl = (org.eclipse.bpel.model.impl.ToImpl) t;
-					if (toImpl.partName != null) {
-						name = name + "." + toImpl.partName;
+					// TODO: the commented code is the right one, but t.getPart() /always/ returns null
+					// Thus, a Quickhack is provided - changed visibility of toImpl.partName, since to.getPart() was always null, even if partName was != null
+					Part p = t.getPart();
+					if (p != null) {
+						name = name + "." + p.getName();
 					}
-					// TODO: above is a Quickhack - changed visibility of toImpl.partName, since to.getPart() was always null, even if partName was != null
-//					Part p = t.getPart();
-//					if (p != null) {
-//						name = name + "." + p.getName();
+//					ToImpl toImpl = (org.eclipse.bpel.model.impl.ToImpl) t;
+//					if (toImpl.partName != null) {
+//						name = name + "." + toImpl.partName;
 //					}
 
 					Query q = t.getQuery();
@@ -362,12 +384,15 @@ public class Basic {
 	 */
 	private static boolean doesWriteReceive(Receive activity,
 			String variableElement) {
-		System.err.println(">doesWriteReceive: activity = " + Utility.dumpEE(activity) + ", variableElement = " + variableElement);
+		logger.entry("doesWriteReceive()");
+		logger.debugObject("act", Utility.dumpEE(activity));
+		logger.debugObject("ve", variableElement);
+
 		org.eclipse.bpel.model.Variable receiveVar = activity.getVariable();
-		if(receiveVar != null){
-		if(Utility.subElement(receiveVar.getName(),variableElement)) {
-			return true;
-		}
+		if (receiveVar != null) {
+			if (Utility.subElement(receiveVar.getName(), variableElement)) {
+				return true;
+			}
 		}
 		FromParts fromParts = activity.getFromParts();
 		if (fromParts != null) {
@@ -380,6 +405,8 @@ public class Basic {
 				}
 			}
 		}
+		
+		logger.exit("doesWriteReceive()");
 		return false;
 	}
 	

@@ -2,6 +2,7 @@
  * Flow analysis
  * 
  * Copyright 2008 Sebastian Breier
+ * Copyright 2009-2010 Yangyang Gao, Oliver Kopp
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +32,16 @@ import org.eclipse.bpel.model.Link;
 import org.eclipse.bpel.model.Source;
 import org.eclipse.bpel.model.Target;
 import org.eclipse.emf.common.util.EList;
+import org.grlea.log.SimpleLogger;
 
 /**
  * Flow analysis
  * HandleFlow / HandleEndOfFlow
- * @author yangyang Gao
- *
  */
 public class Flow {
 	
+	private final static SimpleLogger logger = new SimpleLogger(Flow.class);
+
 	/**
 	 * See DIP-2726 p. 65 algo 9
 	 * Analysis a Flow container activity
@@ -93,13 +95,16 @@ public class Flow {
 	 * @param variableElement
 	 */
 	public static void HandleEndOfFlow(org.eclipse.bpel.model.Flow flowActivity, String variableElement) {
-		System.err.println(">HandleEndOfFlow: element = " + Utility.dumpEE(flowActivity) + ", variableElement = " + variableElement);
+		logger.entry("HandleEndOfFlow()");
+		logger.debugObject("act", Utility.dumpEE(flowActivity));
+		logger.debugObject("ve", variableElement);
+
 		Set<org.eclipse.bpel.model.Activity> leaves = findLeaves(flowActivity);
 		boolean allFinished = true;
 		for (org.eclipse.bpel.model.Activity leaf : leaves) {
 			if (!State.getInstance().isFinished(leaf)) {
 				allFinished = false;
-				System.err.println("<HandleEndOfFlow: nothing to do yet");
+				logger.exit("HandleEndOfFlow() - nothing to do yet.");
 				return;
 			}
 		}
@@ -119,7 +124,9 @@ public class Flow {
 			
 			Activity.handleSuccessors(flowActivity, variableElement);
 		}
-		System.err.println("<HandleEndOfFlow: element = " + Utility.dumpEE(flowActivity));
+		
+		logger.exit("HandleEndOfFlow()");
+		logger.debugObject("act", Utility.dumpEE(flowActivity));
 	}
 	
 	private static Set<org.eclipse.bpel.model.Activity> findLeaves(org.eclipse.bpel.model.Flow flowActivity) {

@@ -2,6 +2,7 @@
  * Classes for BPEL variable handling
  * 
  * Copyright 2008 Sebastian Breier
+ * Copyright 2010 Oiver Kopp
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +23,7 @@ import java.util.Set;
 
 /**
  * One BPEL variable with refs to sub-elements
- * @author Sebastian Breier
+ * @author Sebastian Breier, Oliver Kopp
  *
  */
 public class VariableElement {

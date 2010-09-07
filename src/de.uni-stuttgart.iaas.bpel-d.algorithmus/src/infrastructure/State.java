@@ -2,6 +2,7 @@
  * Classes describing analysis state
  * 
  * Copyright 2008 Sebastian Breier
+ * Copyright 2009-2010 Oliver Kopp
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +29,7 @@ import org.eclipse.bpel.model.ExtensibleElement;
  * The current state of analysis
  * Instances of this object can be passed around to analysis methods to contain analysis data
  * This is a Singleton to ease access
+ * 
  * @author Sebastian Breier
  *
  */
@@ -36,7 +38,7 @@ public class State {
 	/**
 	 * Singleton instance
 	 */
-	private static State instance;
+	private static State instance = null;
 	
 	/**
 	 * All writer states for all activity placements
@@ -73,14 +75,12 @@ public class State {
 		return instance;
 	}
 	
-
-	
 	/**
 	 * Clear the state by deleting the State instance reference
 	 */
-	public static void clearState() {
-		instance = null;
-	}
+//	public static void clearState() {
+//		instance = null;
+//	}
 	
 	/**
 	 * Clear the writes sets

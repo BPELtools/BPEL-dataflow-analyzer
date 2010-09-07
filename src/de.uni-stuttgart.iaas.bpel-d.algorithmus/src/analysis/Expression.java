@@ -24,10 +24,12 @@ package analysis;
  */
 public class Expression {
 
+	/* -- currently not used --
 	public static boolean containsNot(Expression exp) {
 		// FIXME: No idea what conditions/expressions look like right now
 		System.err.println(">containsNot STUB: exp: " + exp);
 		return false;
 	}
+	*/
 	
 }

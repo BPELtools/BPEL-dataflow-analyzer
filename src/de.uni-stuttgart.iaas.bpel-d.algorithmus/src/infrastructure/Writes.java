@@ -2,6 +2,7 @@
  * Classes for saving writer state
  * 
  * Copyright 2008 Sebastian Breier
+ * Copyright 2009-2010 Yangyang Gao, Oliver Kopp
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +28,7 @@ import analysis.Utility;
 
 /**
  * The writer state for a certain activity in a certain state
- * @author yangyang Gao
+ * @author Sebastian Breier
  *
  */
 public class Writes {
@@ -239,9 +240,6 @@ public class Writes {
 		return res + "]"; 
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "Writes @ " + place + ": poss = " + setToString(poss) + ", dis = " + setToString(dis) + ", inv = " + setToString(inv) + ", mbd = " + mbd;

@@ -23,7 +23,7 @@ import analysis.Utility;
 
 /**
  * Relationship Activity <-> In/Out/Temp
- * @author yangyang Gao
+ * @author Sebastian Breier
  *
  */
 public class Placement {

@@ -1,21 +1,41 @@
+/**
+ * Join Variable Resolver
+ * 
+ * Copyright 2009-2010 Yangyang Gao, Oliver Kopp
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package analysis;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathVariableResolver;
 
+import org.grlea.log.SimpleLogger;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /**
  * Code for jcContains
- * @author yangyang Gao
+ * @author yangyang Gao, Oliver Kopp
  *
  */
-
-
 public class JoinVariableResolver implements XPathVariableResolver {
 	
+	private final SimpleLogger logger = new SimpleLogger(JoinVariableResolver.class);
+
 	private HashMap<String, Boolean> var2value = new HashMap<String, Boolean>();
 	private boolean overflow;
 	
@@ -40,8 +60,8 @@ public class JoinVariableResolver implements XPathVariableResolver {
 		Boolean value = var2value.get(var);
 		if (value == null) {
 			// fallback
-			System.out.println("Something wrent wrong: We didn't find all variables during init");
-			System.out.println(variableName.toString());
+			logger.error("Something wrent wrong: We didn't find all variables during init");
+			logger.debugObject("variable", variableName.toString());
 			return false;
 		} else {
 			return value;

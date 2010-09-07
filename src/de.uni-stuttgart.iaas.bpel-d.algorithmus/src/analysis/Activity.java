@@ -2,6 +2,7 @@
  * Classes for general Activity handling
  * 
  * Copyright 2008 Sebastian Breier
+ * Copyright 2009,2010 Yangyang Gao, Oliver Kopp
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +43,7 @@ import org.eclipse.bpel.model.*;
 import org.eclipse.bpel.model.Flow;
 import org.eclipse.bpel.model.Process;
 import org.eclipse.emf.common.util.EList;
+import org.grlea.log.SimpleLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -51,6 +53,8 @@ import org.w3c.dom.Element;
  *
  */
 public class Activity {
+
+	private final static SimpleLogger logger = new SimpleLogger(Activity.class);
 
 	/**
 	 * Set A_basic of basic activities
@@ -68,7 +72,9 @@ public class Activity {
 	 * @param ve
 	 */
 	public static void handleActivity(ExtensibleElement act, String ve) {
-		System.err.println(">handleActivity: act = " + Utility.dumpEE(act) + ", ve = " + ve);
+		logger.entry("handleActivity()");
+		logger.debugObject("act", Utility.dumpEE(act));
+		logger.debugObject("ve", ve);
 		State myState = State.getInstance();
 		if (act instanceof org.eclipse.bpel.model.Activity) {
 			org.eclipse.bpel.model.Activity a = (org.eclipse.bpel.model.Activity) act;
@@ -76,12 +82,12 @@ public class Activity {
 			boolean allLinksHandled = areAllLinksHandled(a);
 			boolean sequenceHandled = preSequenceHandled(a);
 			if (!parentHandled || !allLinksHandled || !sequenceHandled) {
-				System.err.println("<handleActivity: nothing to do yet.");
+				logger.exit("handleActivity() - nothing to do yet.");
 				return;
 			}
 		} else {
 			if (!(act instanceof Process)) {
-				System.err.println("handleActivity called with an activity not being a real activity");
+				logger.error("handleActivity called with an activity not being a real activity");
 			}
 		}
 		myState.setStarted(act, true);
@@ -139,9 +145,9 @@ public class Activity {
 		else if (act instanceof If){
 			handleIf((If)act, ve);
 		}
-		System.err.println("<handleActivity: act = " + Utility.dumpEE(act) + ", ve = " + ve);
-		System.err.println("res: " + myState.getWrites(new Placement(act, InOut.OUT)));
-
+		logger.exit("handleActivity()");
+		logger.debugObject("act", Utility.dumpEE(act));
+		logger.debugObject("res", myState.getWrites(new Placement(act, InOut.OUT)));
 	}
 	
 	/**
@@ -168,9 +174,10 @@ public class Activity {
 	 * @param ve
 	 */
 	private static void mergeData(org.eclipse.bpel.model.Activity act, String ve) {
-		
-		
-		System.err.println(">mergeData: act = " + Utility.dumpEE(act)+ ", ve = " + ve);
+		logger.entry("mergeData()");
+		logger.debugObject("act", Utility.dumpEE(act));
+		logger.debugObject("ve", ve);
+
 		State myState = State.getInstance();
 
 		Writes writesInAct = myState.getWrites(new Placement(act, InOut.IN));
@@ -191,8 +198,8 @@ public class Activity {
 	            writesInAct.clear();
 	            
 	            Writes writesOutPreActivity = myState.getWrites(new Placement(pred, InOut.OUT));
-	            System.err.println(pred);
-	            System.err.println(writesOutPreActivity);
+	            logger.debugObject("pred", pred);
+	            logger.debugObject("writesOutPreActivity", writesOutPreActivity);
 				writesInAct.getPoss().addAll(writesOutPreActivity.getPoss());
 				writesInAct.getPoss().addAll(writesOutPreActivity.getDis());
 				writesInAct.getInv().addAll(writesOutPreActivity.getInv());
@@ -269,7 +276,9 @@ public class Activity {
 		dState = determineMbdFromLinks(act);
 		writesInAct.mergeWith(pWriters, dWriters, iWriters, dState);
 		purgeDuplicatesOR(writesInAct);
-		System.err.println("<mergeData: writesInCurrent = " + writesInAct);
+		
+		logger.exit("mergeData");
+		logger.debugObject("writesInCurrent", writesInAct);
 	}
 
 	/**
@@ -480,7 +489,7 @@ public class Activity {
 			}
 			jvr.next();
 			if (!jvr.isMaxValue()) {
-				System.err.println("activity has more than one variable in the join condition");
+				logger.error("activity has more than one variable in the join condition");
 			}
 
 			if ((Boolean) xPathExpression.evaluate(el, XPathConstants.BOOLEAN)) {
@@ -489,7 +498,7 @@ public class Activity {
 				return true;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.errorException(e);
 			// TODO: quickhack
 			return false;
 		}
@@ -502,8 +511,10 @@ public class Activity {
 	 * @param activity
 	 */
 	private static boolean negatesLinkStatus(org.eclipse.bpel.model.Activity activity) {
-		System.err.println(">negatesLinkStatus STUB: el = " + Utility.dumpEE(activity));
+		logger.entry("negatesLinkStatus()");
+		logger.debugObject("act", Utility.dumpEE(activity));
 		String jc = Utility.getJoinCondition(activity);
+		logger.exit("negatesLinkStatus()");
 		return negatesLinkStatus(jc);
 	}
 		
@@ -611,7 +622,10 @@ public class Activity {
 	 * @param variableElement
 	 */
 	public static void handleSuccessors(ExtensibleElement act, String variableElement) {
-		System.err.println(">handleSuccessors: act = " + Utility.dumpEE(act) + ", ve = " + variableElement);
+		logger.entry("handleSuccessors()");
+		logger.debugObject("act", Utility.dumpEE(act));
+		logger.debugObject("ve", variableElement);
+
 		State state = State.getInstance();
 		if (act instanceof org.eclipse.bpel.model.Activity) {
 			state.setFinished((org.eclipse.bpel.model.Activity) act, true);
@@ -654,15 +668,15 @@ public class Activity {
 		}
 		// line 14 to 15
 		else if(parent instanceof Scope){
-			System.err.println(">>Scope");
-			System.err.println("Assuming: Main activity of scope is finished");
+			logger.entry("Scope");
+			logger.debug("Assuming: Main activity of scope is finished");
 			// code should only be reached, if main activity of scope is finished (and not in other cases)
 			// See page 76
 			// thus, after the handling of the handlers, the successors of the scope should be handled
 			handleScopeHandlers((Scope)parent, variableElement);
 			//handleSuccessors(parent, variableElement); --> called by handleEndOfScope
 			handleEndOfScope((Scope) parent, variableElement);
-			System.err.println("<<Scope");
+			logger.exit("Scope");
 		}
 		// line 16 to 17 were wrong
 		// line 18 to 19
@@ -706,12 +720,8 @@ public class Activity {
 			handleLink(l.getLink(), variableElement);
 		}		
 
-		System.err.println("<handleSuccessors: act = " + Utility.dumpEE(act));
+		logger.exit("handleSuccessors");
 	}
-	/*
-	 * @param scopeActivity
-	 * @param ve
-	 */
 	
 	private static void handleScopeHandlers(org.eclipse.bpel.model.Scope scopeActivity, String variableElement) {
 		handleFaultHandlers(scopeActivity, variableElement);
@@ -719,10 +729,7 @@ public class Activity {
 		handleTerminationHandler(scopeActivity, variableElement);
 		
 	}
-	/*
-	 * @param scopeActivity
-	 * @param ve
-	 */
+	
 	private static void handleTerminationHandler(org.eclipse.bpel.model.Scope scopeActivity, String ve) {
 		org.eclipse.bpel.model.Activity mainActivity = scopeActivity.getActivity();
 
@@ -773,10 +780,6 @@ public class Activity {
 		}
 	}
 
-	/*
-	 * @pa;
-	 * ram ve
-	 */
 	private static void handleEventHandlers(org.eclipse.bpel.model.Scope scopeActivity, String ve) {
 		org.eclipse.bpel.model.Activity mainActivity = scopeActivity.getActivity();
 				
@@ -840,10 +843,6 @@ public class Activity {
 	
 	
 
-	/*
-	 * @param scopeActivity
-	 * @param ve
-	 */
 	private static void handleFaultHandlers(org.eclipse.bpel.model.Scope scopeActivity, String variableElement) {
 		org.eclipse.bpel.model.Activity mainActivity = scopeActivity.getActivity();
 
@@ -933,7 +932,10 @@ public class Activity {
 		source = sources.get(0).getActivity();
 		target = link.getTargets().get(0).getActivity();
 		
-		System.err.println(">handleLink: " + link.getName() + ": " + Utility.dumpEE(source) + " --> " + Utility.dumpEE(target));
+		logger.entry("handleLink()");
+		logger.debugObject("name", link.getName());
+		logger.debugObject("source", Utility.dumpEE(source));
+		logger.debugObject("target", Utility.dumpEE(target));
 				
 		ExtensibleElement sourceParent = Utility.getParent(source);
 		ExtensibleElement sharedParent = Utility.getSharedParent(source, target);
@@ -971,7 +973,10 @@ public class Activity {
 		
 		handleActivity(target, variableElement);		
 
-		System.err.println("<handleLink: " + link.getName() + ": " + Utility.dumpEE(source) + " --> " + Utility.dumpEE(target));
+		logger.exit("handleLink()");
+		logger.debugObject("name", link.getName());
+		logger.debugObject("source", Utility.dumpEE(source));
+		logger.debugObject("target", Utility.dumpEE(target));
 	}
 
 	/**
@@ -984,7 +989,10 @@ public class Activity {
 	 * @return
 	 */
 	public static Writes overWrite(Writes writesIn, Writes writesTmp) {
-		System.err.println(">overWrite: writesIn = " + writesIn + ", writesTmp = " + writesTmp);
+		logger.entry("overWrite()");
+		logger.debugObject("writesIn", writesIn);
+		logger.debugObject("writesTmp", writesTmp);
+		
 		//Placement placement = new Placement(writesIn.getPlacement().getElement(), InOut.OUT);
 		Writes writesOut = new Writes();
 		if(writesTmp.getPoss().isEmpty()){
@@ -1016,6 +1024,8 @@ public class Activity {
 			
 		}
 		purgeDuplicateXOR(writesOut);
+		
+		logger.exit("overWrite()");
 		return writesOut;
 	}
 	/**
@@ -1028,7 +1038,10 @@ public class Activity {
 	 * @return
 	 */
 	public static Writes overWriteNoEndDeadPath(Writes writesIn, Writes writesTmp) {
-		System.err.println(">overWrite: writesIn = " + writesIn + ", writesTmp = " + writesTmp);
+		logger.entry("overWriteNoEndDeadPath()");
+		logger.debugObject("writesIn", writesIn);
+		logger.debugObject("writesTmp", writesTmp);
+
 		//Placement placement = new Placement(writesIn.getPlacement().getElement(), InOut.OUT);
 		Writes writesOut = new Writes();
 		if(writesTmp.getPoss().isEmpty()){
@@ -1055,6 +1068,8 @@ public class Activity {
 			writesOut.setMbd(false);	
 		}
 		purgeDuplicateXOR(writesOut);
+		
+		logger.exit("overWriteNoEndDeadPath()");
 		return writesOut;
 	}
 	/*

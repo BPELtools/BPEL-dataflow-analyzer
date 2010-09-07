@@ -1,7 +1,8 @@
 /**
- * Utility classes
+* Utility classes
  * 
  * Copyright 2008 Sebastian Breier
+ * Copyright 2009-2010 Yangyang Gao, Oliver Kopp
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +33,7 @@ import org.w3c.dom.Element;
 
 /**
  * Utility functions
- * @author yangyang Gao
+ * @author Sebastian Breier, Yangyang Gao, Oliver Kopp
  *
  */
 public class Utility {

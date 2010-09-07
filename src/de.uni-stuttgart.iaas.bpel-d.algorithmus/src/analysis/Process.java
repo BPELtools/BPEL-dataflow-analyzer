@@ -2,6 +2,7 @@
  * Analysis of Process elements
  * 
  * Copyright 2008 Sebastian Breier
+ * Copyright 2009-2010 Yangyang Gao, Oliver Kopp
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +24,7 @@ import infrastructure.State;
 import infrastructure.VariableElement;
 import infrastructure.Writes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +33,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.bpel.model.Activity;
 import org.eclipse.bpel.model.Assign;
@@ -65,105 +69,66 @@ import org.eclipse.bpel.model.messageproperties.Property;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.wst.wsdl.Part;
+import org.grlea.log.SimpleLogger;
 
 /**
  * Code for analysis of Process elements
- * @author yangyang Gao
+ * @author Sebastian Breier, yangyang Gao, Oliver Kopp
  *
  */
 public class Process {
+
+	private static final SimpleLogger logger = new SimpleLogger(Process.class);
 
 	/**
 	 * Start analysis on the given process model
 	 * Cleans up earlier analysis runs, then starts analysis
 	 * See p. 63 of DIP-2726
 	 * @param process
+	 * @throws Exception 
 	 */
-	public static void analyzeProcessModel(org.eclipse.bpel.model.Process process) {
-		State myState = State.getInstance();
+	public static AnalysisResult analyzeProcessModel(org.eclipse.bpel.model.Process process) throws Exception {
+		if (process == null) {
+			throw new Exception("invalid process model");
+		}
+
 		//line 2
 		Set<Activity> allActivities = findAllActivities(process);		
-		Collection<String> vars = findAllVariablesWrittenTo(allActivities);
 		HashMap<String, Map<Placement, Writes>> resultData = new HashMap<String, Map<Placement, Writes>>();
+
+		/*/ Debug run
+		ArrayList<String> vars = new ArrayList<String>();
+		vars.add("orderInfo");
+		/* */
 		
-		// FIXME Debug run
+		// real run
+		Collection<String> vars = findAllVariablesWrittenTo(allActivities);
+		
 		for (String var: vars) {
-			// fetch first variable from array for debug run
-			//String var = (String) vars.toArray()[0];
-//			String var = "orderInfo";
-			myState.clearWrites();
-			myState.clearFlags();
-			analysis.Activity.handleActivity(process, var);
-			System.err.print("res");
-			System.err.println(myState.getWrites(new Placement(process, InOut.OUT)));
-			System.err.println("--------------------");
-			
-			resultData.put(var, myState.getAllWrites());
+			Map<Placement, Writes> writesFunction = analyzeVariableElement(process, var);
+			resultData.put(var, writesFunction);
 		}
 		
-		outputResult(allActivities, vars, resultData);
+		return new AnalysisResult(allActivities, vars, resultData);
+	}
+	
+	public static Map<Placement, Writes> analyzeVariableElement(org.eclipse.bpel.model.Process process, String variableElement) {
+		logger.entry("analyzeVariableElement");
+		logger.debugObject("ve", variableElement);
+		
+		State myState = State.getInstance();
+		myState.clearWrites();
+		myState.clearFlags();
+		analysis.Activity.handleActivity(process, variableElement);
+		Map<Placement, Writes> writesFunction = myState.getAllWrites();
+
+		logger.exit("analyzeVariableElement");
+		logger.debugObject("res", writesFunction.get(new Placement(process, InOut.OUT)));
+		logger.exit("Analyzing Variable");
+		
+		return writesFunction;
 	}
 
-	private static void outputResult(Set<Activity> allActivities, Collection<String> allVars, HashMap<String, Map<Placement, Writes>> resultData) {
-		SortedSet<String> sortedVars = new TreeSet<String>();
-		sortedVars.addAll(allVars);
-		//SortedSet<Activity> sortedActivities = new TreeSet<Activity>();
-		//sortedActivities.addAll(allActivities);
-		Set<Activity> anonymousActivities = new HashSet<Activity>();
-		HashMap<String,Activity> mapActivities = new HashMap<String,Activity>();
-		for (Activity act: allActivities) {
-			String name = act.getName();
-			if (name != null)
-				mapActivities.put(act.getName(), act);
-			else
-				anonymousActivities.add(act);
-		}
-		SortedSet<String> sortedActivityNames = new TreeSet<String>();
-		sortedActivityNames.addAll(mapActivities.keySet());
-		
-		for (String name : sortedActivityNames) {
-			System.err.println("==============================");
-			Activity act = mapActivities.get(name);
-			System.err.println(Utility.dumpEE(act));
-			for (String var: sortedVars) {
-				System.err.println(var);
-				outPutVar(var, act, resultData);
-			}
-		}
-		System.err.println("did not output...");
-		for (Activity act: anonymousActivities) {
-			System.err.println(Utility.dumpEE(act));
-		}
-		
-		System.err.println();
-		System.err.println("==================");
-		for(String var: sortedVars) {
-			System.err.println("==================");
-			System.err.print("var: ");
-			System.err.println(var);
-			for (String name: sortedActivityNames) {
-				Activity act = mapActivities.get(name);
-				System.err.println(Utility.dumpEE(act));
-				outPutVar(var, act, resultData);
-			}
-		}
-	}
-
-		private static void outPutVar(String var, Activity act, HashMap<String, Map<Placement, Writes>> resultData) {
-			Map<Placement, Writes> curMap = resultData.get(var);
-			Writes writesIn = curMap.get(new Placement(act, InOut.IN));
-			if (writesIn == null) {
-				System.err.println("!! not handled !!");
-			} else {
-				System.err.print("in:");
-				System.err.println(writesIn.toString());
-				Writes writesOut = curMap.get(new Placement(act, InOut.OUT));
-				System.err.print("out:");
-				System.err.println(writesOut.toString());
-			}
-			System.err.println("-----------------------------------");
-		}
-		
 	/**
 	 * Find all activities contained in a given element
 	 * @param process
@@ -184,6 +149,16 @@ public class Process {
 			allActs.addAll(allSubActs);
 		}
 		return allActs;
+	}
+	
+	private static void addExpressionToRes(String expression, Collection<String> res) {
+		// pattern for a variable in XPath (Quickhack. It would be better to have an XPath AST or similar)
+		Pattern pattern = Pattern.compile("\\$[0-9a-zA-Z_.]+");
+		Matcher matcher = pattern.matcher(expression);
+		while (matcher.find()) {
+			String var = expression.substring(matcher.start()+1, matcher.end());
+			res.add(var);
+		}
 	}
 	
 	/**
@@ -218,18 +193,26 @@ public class Process {
 							// XPath statement
 							res.add(pr.getName());
 						} else {
-							// TODO: Quickhack, since t.getPart() is always null
 							ToImpl toImpl = (ToImpl) t;
-							String name;
-							if (toImpl.partName != null) {
-								name = var.getName() + "." + toImpl.partName;
-							} else {
-								name = var.getName();
+							String name = var.getName();
+
+							/* get part attribute */
+							// This quickhack requires a patched version of the eclipse BPEL designer
+//							if (toImpl.partName != null) {
+//								name = var.getName() + "." + toImpl.partName;
+//							} else {
+//								name = var.getName();
+//							}
+							// p is always null, even if a part exists
+//							Part p = t.getPart();
+//							if (p != null) {
+//								name = name + "." + p.getName();
+//							}
+							String p = t.getElement().getAttribute("part");
+							if (!p.isEmpty()) {
+								name = name.concat(".").concat(p);
 							}
-							// Part p = t.getPart();
-							// if (p != null) {
-							// name = var.getName() + "." + p.getName();
-							// }
+							
 							Query q = t.getQuery();
 							if (q != null) {
 								String query = q.getValue();
@@ -246,9 +229,7 @@ public class Process {
 					}
 					Expression ex = t.getExpression();
 					if ((ex != null) && (ex.getBody() != null)){
-						// TODO: Quickhack, getting too much variables - check
-						// whether this is OK with the constraints of the paper
-						res.add(ex.getBody().toString());
+						addExpressionToRes(ex.getBody().toString(), res);
 					}
 
 				}
