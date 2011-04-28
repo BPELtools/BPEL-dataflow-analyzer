@@ -37,7 +37,7 @@ import org.eclipse.bpel.model.Catch;
 import org.eclipse.bpel.model.Copy;
 import org.eclipse.bpel.model.EventHandler;
 import org.eclipse.bpel.model.Expression;
-import org.eclipse.bpel.model.ExtensibleElement;
+import org.eclipse.bpel.model.BPELExtensibleElement;
 import org.eclipse.bpel.model.FaultHandler;
 import org.eclipse.bpel.model.ForEach;
 import org.eclipse.bpel.model.From;
@@ -135,17 +135,17 @@ public class Process {
 	 * @param process
 	 * @return
 	 */
-	private static Set<Activity> findAllActivities(ExtensibleElement element) {
+	private static Set<Activity> findAllActivities(BPELExtensibleElement element) {
 //		System.err.println(">findAllActivities: " + element);
 		Set<Activity> allActs = new HashSet<Activity>();
 		if (element instanceof Activity) {
 			allActs.add((Activity)element);
 		}
 		for (EObject object: element.eContents()) {
-			if (!(object instanceof ExtensibleElement)) {
+			if (!(object instanceof BPELExtensibleElement)) {
 				continue;
 			}
-			ExtensibleElement contentsElement = (ExtensibleElement)object;
+			BPELExtensibleElement contentsElement = (BPELExtensibleElement)object;
 			Set<Activity> allSubActs = findAllActivities(contentsElement);
 			allActs.addAll(allSubActs);
 		}

@@ -17,7 +17,7 @@
  */
 package de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure;
 
-import org.eclipse.bpel.model.ExtensibleElement;
+import org.eclipse.bpel.model.BPELExtensibleElement;
 
 import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Utility;
 
@@ -32,7 +32,7 @@ public class Placement {
 	/**
 	 * The element to be linked
 	 */
-	private ExtensibleElement element;
+	private BPELExtensibleElement element;
 	
 	/**
 	 * The placement of the writes set: in, out or temp
@@ -61,7 +61,7 @@ public class Placement {
 	/**
 	 * @return the activity
 	 */
-	public ExtensibleElement getElement() {
+	public BPELExtensibleElement getElement() {
 		return element;
 	}
 
@@ -77,7 +77,7 @@ public class Placement {
 	 * @param el
 	 * @param place
 	 */
-	public Placement(ExtensibleElement el, InOut place) {
+	public Placement(BPELExtensibleElement el, InOut place) {
 		element = el;
 		this.place = place;
 	}

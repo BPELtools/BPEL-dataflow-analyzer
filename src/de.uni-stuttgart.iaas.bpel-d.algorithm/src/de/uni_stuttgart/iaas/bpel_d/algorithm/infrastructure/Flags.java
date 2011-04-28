@@ -17,7 +17,7 @@
  */
 package de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure;
 
-import org.eclipse.bpel.model.ExtensibleElement;
+import org.eclipse.bpel.model.BPELExtensibleElement;
 
 /**
  * Activity <-> Flag relation
@@ -29,7 +29,7 @@ public class Flags {
 	/**
 	 * The linked BPEL element
 	 */
-	private ExtensibleElement element;
+	private BPELExtensibleElement element;
 	
 	/**
 	 * Flag for "analysis started"
@@ -54,7 +54,7 @@ public class Flags {
 	 * Create a new Flags set for the given element
 	 * @param act
 	 */
-	public Flags(ExtensibleElement element) {
+	public Flags(BPELExtensibleElement element) {
 		this.element = element;
 	}
 

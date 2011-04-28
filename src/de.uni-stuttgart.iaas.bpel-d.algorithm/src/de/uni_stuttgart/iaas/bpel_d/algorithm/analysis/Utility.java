@@ -42,7 +42,7 @@ public class Utility {
 	 * Find the parent element
 	 * @param element
 	 */
-	public static ExtensibleElement getParent(EObject element) {
+	public static BPELExtensibleElement getParent(EObject element) {
 		if (element == null) {
 			return null;
 		}
@@ -65,22 +65,22 @@ public class Utility {
 			!(containerObject instanceof TerminationHandler) ) {
 			return getParent(containerObject);
 		}
-		return (ExtensibleElement)containerObject;
+		return (BPELExtensibleElement)containerObject;
 	}
 
 	/**
 	 * Find the predecessor element
 	 * @param element
 	 */
-	public static ExtensibleElement getPredecessor(ExtensibleElement element) {
+	public static BPELExtensibleElement getPredecessor(BPELExtensibleElement element) {
 		if (element == null){
 			return null;
 		}
 		EObject containerObject = element.eContainer();
-		if(!(containerObject instanceof ExtensibleElement)){
+		if(!(containerObject instanceof BPELExtensibleElement)){
 			return null;
 		}
-		return (ExtensibleElement)containerObject;
+		return (BPELExtensibleElement)containerObject;
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class Utility {
 	 * @param el
 	 * @return
 	 */
-	public static org.eclipse.bpel.model.Activity getOnlyContainedActivity(ExtensibleElement el) {
+	public static org.eclipse.bpel.model.Activity getOnlyContainedActivity(BPELExtensibleElement el) {
 		if (el == null) {
 			return null;
 		}
@@ -107,7 +107,7 @@ public class Utility {
 	 * @param el
 	 * @return
 	 */
-	public static EList<Target> getTargetLinks(ExtensibleElement el) {
+	public static EList<Target> getTargetLinks(BPELExtensibleElement el) {
 		EList<Target> emptyList = new BasicEList<Target>();
 		Targets t = getTargets(el);
 		if (t == null) {
@@ -121,12 +121,12 @@ public class Utility {
 	}
 
 	/**
-	 * Retrieve the join condition of an ExtensibleElement
+	 * Retrieve the join condition of an BPELExtensibleElement
 	 * Might be "null"
 	 * @param element
 	 * @return
 	 */
-	public static String getJoinCondition(ExtensibleElement element) {
+	public static String getJoinCondition(BPELExtensibleElement element) {
 		Targets t = getTargets(element);
 		if (t == null) {
 			return null;
@@ -154,11 +154,11 @@ public class Utility {
 
 	
 	/**
-	 * Retrieve the targets of an ExtensibleElement
+	 * Retrieve the targets of an BPELExtensibleElement
 	 * @param element
 	 * @return
 	 */
-	private static Targets getTargets(ExtensibleElement element) {
+	private static Targets getTargets(BPELExtensibleElement element) {
 		if (!(element instanceof org.eclipse.bpel.model.Activity)) {
 			return null;
 		}
@@ -166,7 +166,7 @@ public class Utility {
 		return act.getTargets();
 	}
 	
-	public static EList<Source> getSourceLinks(ExtensibleElement el) {
+	public static EList<Source> getSourceLinks(BPELExtensibleElement el) {
 		EList<Source> emptyList = new BasicEList<Source>();
 		Sources s = getSources(el);
 		if (s == null) {
@@ -183,7 +183,7 @@ public class Utility {
 	/*
 	 * wie getTagets
 	 */
-	private static Sources getSources(ExtensibleElement flowChild) {
+	private static Sources getSources(BPELExtensibleElement flowChild) {
 		if (!(flowChild instanceof org.eclipse.bpel.model.Activity)) {
 			return null;
 		}
@@ -193,17 +193,17 @@ public class Utility {
 	
 	
 	/**
-	 * Find all directly contained children of an ExtensibleElement
+	 * Find all directly contained children of an BPELExtensibleElement
 	 * @param activity
 	 * @return
 	 */
-	public static Set<ExtensibleElement> findChildrenEE(ExtensibleElement activity) {
+	public static Set<BPELExtensibleElement> findChildrenEE(BPELExtensibleElement activity) {
 //		System.err.println(">findChildren: activity = " + Utility.dumpEE(activity));
-		Set<ExtensibleElement> children = new HashSet<ExtensibleElement>();
+		Set<BPELExtensibleElement> children = new HashSet<BPELExtensibleElement>();
 		EList<EObject> containedObjects = activity.eContents();
 		for (EObject containedObject: containedObjects) {
-			if (containedObject instanceof ExtensibleElement) {
-				children.add((ExtensibleElement)containedObject);
+			if (containedObject instanceof BPELExtensibleElement) {
+				children.add((BPELExtensibleElement)containedObject);
 			}
 		}
 //		System.err.println("<findChildren: children = " + dumpSet(children));
@@ -211,18 +211,18 @@ public class Utility {
 	}
 
 	/**
-	 * Find all descendants (children and children's children) of an ExtensibleElement
+	 * Find all descendants (children and children's children) of an BPELExtensibleElement
 	 * Uses a recursive approach
 	 * @param activity
 	 * @return
 	 */
-	public static Set<ExtensibleElement> findDescendantsEE(ExtensibleElement activity) {
+	public static Set<BPELExtensibleElement> findDescendantsEE(BPELExtensibleElement activity) {
 //		System.err.println(">findDescendants: activity = " + Utility.dumpEE(activity));
-		Set<ExtensibleElement> descendants = new HashSet<ExtensibleElement>();
-		Set<ExtensibleElement> children = findChildrenEE(activity);
+		Set<BPELExtensibleElement> descendants = new HashSet<BPELExtensibleElement>();
+		Set<BPELExtensibleElement> children = findChildrenEE(activity);
 		descendants.addAll(children);
-		for (ExtensibleElement child: children) {
-			Set<ExtensibleElement> moreDescendants = findDescendantsEE(child);
+		for (BPELExtensibleElement child: children) {
+			Set<BPELExtensibleElement> moreDescendants = findDescendantsEE(child);
 			descendants.addAll(moreDescendants);
 		}
 //		System.err.println("<findDescendants: descendants = " + dumpSet(descendants));
@@ -233,9 +233,9 @@ public class Utility {
 	 * Return a string that is a textual representation of the given set of activities
 	 * @param activities
 	 */
-	public static String dumpSet(Set<? extends ExtensibleElement> activities) {
+	public static String dumpSet(Set<? extends BPELExtensibleElement> activities) {
 		StringWriter writer = new StringWriter();
-		for (ExtensibleElement activity: activities) {
+		for (BPELExtensibleElement activity: activities) {
 			writer.append(dumpEE(activity));
 			writer.append(", ");
 		}
@@ -243,11 +243,11 @@ public class Utility {
 	}
 	
 	/**
-	 * Return a textual representation of the given ExtensibleElement
+	 * Return a textual representation of the given BPELExtensibleElement
 	 * @param activity
 	 * @return
 	 */
-	public static String dumpEE(ExtensibleElement activity) {
+	public static String dumpEE(BPELExtensibleElement activity) {
 		if (activity == null)
 			return "null";
 		if (activity instanceof org.eclipse.bpel.model.Process) {
@@ -269,9 +269,9 @@ public class Utility {
 	 * @param activitiesEE
 	 * @return
 	 */
-	public static Set<Activity> filterActivities(Set<ExtensibleElement> activitiesEE) {
+	public static Set<Activity> filterActivities(Set<BPELExtensibleElement> activitiesEE) {
 		Set<Activity> activitiesAct = new HashSet<Activity>();
-		for (ExtensibleElement element: activitiesEE) {
+		for (BPELExtensibleElement element: activitiesEE) {
 			if (element instanceof Activity) {
 				activitiesAct.add((Activity)element);
 			}
@@ -280,24 +280,24 @@ public class Utility {
 	}
 	
 	/**
-	 * Find all children of type activity of an ExtensibleElement
+	 * Find all children of type activity of an BPELExtensibleElement
 	 * @param activity
 	 * @return
 	 */
-	public static Set<Activity> findChildrenAct(ExtensibleElement activity) {
+	public static Set<Activity> findChildrenAct(BPELExtensibleElement activity) {
 		return filterActivities(findChildrenEE(activity));
 	}
 	
 	/**
-	 * Find all descendants of type activity of an ExtensibleElement
+	 * Find all descendants of type activity of an BPELExtensibleElement
 	 * @param activity
 	 * @return
 	 */
-	public static Set<Activity> findDescendantsAct(ExtensibleElement activity) {
+	public static Set<Activity> findDescendantsAct(BPELExtensibleElement activity) {
 		return filterActivities(findDescendantsEE(activity));
 	}
 	
-	private static void localToScopeEEs(ExtensibleElement el,
+	private static void localToScopeEEs(BPELExtensibleElement el,
 			Set<org.eclipse.bpel.model.Activity> noScopes,
 			Set<org.eclipse.bpel.model.Activity> scopes) {
 	
@@ -310,8 +310,8 @@ public class Utility {
 		
 		EList<EObject> containedObjects = el.eContents();
 		for (EObject containedObject: containedObjects) {
-			if (containedObject instanceof ExtensibleElement) {
-				localToScopeEEs((ExtensibleElement) containedObject, noScopes, scopes);
+			if (containedObject instanceof BPELExtensibleElement) {
+				localToScopeEEs((BPELExtensibleElement) containedObject, noScopes, scopes);
 			}
 		}
 
@@ -371,11 +371,11 @@ public class Utility {
 		}
 	}
 	
-	public static ExtensibleElement getSharedParent(
-			ExtensibleElement source, ExtensibleElement target) {
+	public static BPELExtensibleElement getSharedParent(
+			BPELExtensibleElement source, BPELExtensibleElement target) {
 		// store all parents of the source in a list
-		List<ExtensibleElement> l = new ArrayList<ExtensibleElement>();
-		ExtensibleElement p = Utility.getParent(source);
+		List<BPELExtensibleElement> l = new ArrayList<BPELExtensibleElement>();
+		BPELExtensibleElement p = Utility.getParent(source);
 		while (!(p instanceof org.eclipse.bpel.model.Process)) {
 			l.add(p);
 			p = getParent(p);

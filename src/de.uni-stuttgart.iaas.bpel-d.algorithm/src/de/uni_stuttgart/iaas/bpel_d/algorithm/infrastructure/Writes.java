@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.bpel.model.ExtensibleElement;
+import org.eclipse.bpel.model.BPELExtensibleElement;
 
 import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Utility;
 
@@ -37,17 +37,17 @@ public class Writes {
 	/**
 	 * Set of possible writers
 	 */
-	private Set<ExtensibleElement> poss = new HashSet<ExtensibleElement>();
+	private Set<BPELExtensibleElement> poss = new HashSet<BPELExtensibleElement>();
 	
 	/**
 	 * Set of disabled writers
 	 */
-	private Set<ExtensibleElement> dis = new HashSet<ExtensibleElement>();
+	private Set<BPELExtensibleElement> dis = new HashSet<BPELExtensibleElement>();
 	
 	/**
 	 * Set of invalid writers
 	 */
-	private Set<ExtensibleElement> inv = new HashSet<ExtensibleElement>();
+	private Set<BPELExtensibleElement> inv = new HashSet<BPELExtensibleElement>();
 	
 	/**
 	 * May be dead state 
@@ -74,7 +74,7 @@ public class Writes {
 	/**
 	 * Create a new non-placed writes tuple
 	 */
-	public Writes(Set<ExtensibleElement> poss, Set<ExtensibleElement> dis, Set<ExtensibleElement> inv, boolean mbd) {
+	public Writes(Set<BPELExtensibleElement> poss, Set<BPELExtensibleElement> dis, Set<BPELExtensibleElement> inv, boolean mbd) {
 		place = null;
 		this.poss = poss;
 		this.dis = dis;
@@ -82,7 +82,7 @@ public class Writes {
 		this.mbd = mbd;
 	}
 	
-	public Writes(Placement p, Set<ExtensibleElement> poss, Set<ExtensibleElement> dis, Set<ExtensibleElement> inv, boolean mbd) {
+	public Writes(Placement p, Set<BPELExtensibleElement> poss, Set<BPELExtensibleElement> dis, Set<BPELExtensibleElement> inv, boolean mbd) {
 		this(poss,dis,inv,mbd);
 		place = p;
 	}
@@ -100,14 +100,14 @@ public class Writes {
 //			return;
 //		}
 //		State myState = State.getInstance();
-//		ExtensibleElement parent = Utility.getParent(place.getElement());
+//		BPELExtensibleElement parent = Utility.getParent(place.getElement());
 //		if (parent == null) {
 //			return;
 //		}
 //		Placement parentPlacement = new Placement(parent, InOut.IN);
 //		Writes parentWritesIn = myState.getWrites(parentPlacement);
-//		Set<ExtensibleElement> possParent = new HashSet<ExtensibleElement>(parentWritesIn.getPoss());
-//		Set<ExtensibleElement> invParent = new HashSet<ExtensibleElement>(parentWritesIn.getInv());
+//		Set<BPELExtensibleElement> possParent = new HashSet<BPELExtensibleElement>(parentWritesIn.getPoss());
+//		Set<BPELExtensibleElement> invParent = new HashSet<BPELExtensibleElement>(parentWritesIn.getInv());
 //		boolean mbdParent = parentWritesIn.isMbd();
 //		setPoss(possParent);
 //		clearDis();
@@ -123,21 +123,21 @@ public class Writes {
 	}
 
 	private void clearPoss() {
-		poss = new HashSet<ExtensibleElement>();		
+		poss = new HashSet<BPELExtensibleElement>();		
 	}
 
 	/**
 	 * Clear the disabled writers set
 	 */
 	public void clearDis() {
-		setDis(new HashSet<ExtensibleElement>());
+		setDis(new HashSet<BPELExtensibleElement>());
 	}
 	
 	/**
 	 * Clear the invalid writers set
 	 */
 	public void clearInv() {
-		setInv(new HashSet<ExtensibleElement>());
+		setInv(new HashSet<BPELExtensibleElement>());
 	}
 	
 	public void clear() {
@@ -151,7 +151,7 @@ public class Writes {
 	 * Get the possible writers of this writes tuple
 	 * @return the poss
 	 */
-	public Set<ExtensibleElement> getPoss() {
+	public Set<BPELExtensibleElement> getPoss() {
 		return poss;
 	}
 
@@ -159,7 +159,7 @@ public class Writes {
 	 * Get the disabled writers of this writes tuple
 	 * @return the dis
 	 */
-	public Set<ExtensibleElement> getDis() {
+	public Set<BPELExtensibleElement> getDis() {
 		return dis;
 	}
 
@@ -167,7 +167,7 @@ public class Writes {
 	 * Get the invalid writers of this writes tuple
 	 * @return the inv
 	 */
-	public Set<ExtensibleElement> getInv() {
+	public Set<BPELExtensibleElement> getInv() {
 		return inv;
 	}
 
@@ -183,7 +183,7 @@ public class Writes {
 	 * Set the possible writers
 	 * @param poss the poss to set
 	 */
-	private void setPoss(Set<ExtensibleElement> poss) {
+	private void setPoss(Set<BPELExtensibleElement> poss) {
 		this.poss = poss;
 	}
 
@@ -191,7 +191,7 @@ public class Writes {
 	 * Set the disabled writers
 	 * @param dis the dis to set
 	 */
-	private void setDis(Set<ExtensibleElement> dis) {
+	private void setDis(Set<BPELExtensibleElement> dis) {
 		this.dis = dis;
 	}
 
@@ -199,7 +199,7 @@ public class Writes {
 	 * Set the invalid writers
 	 * @param inv the inv to set
 	 */
-	private void setInv(Set<ExtensibleElement> inv) {
+	private void setInv(Set<BPELExtensibleElement> inv) {
 		this.inv = inv;
 	}
 
@@ -218,20 +218,20 @@ public class Writes {
 	 * @param i
 	 * @param mbdState
 	 */
-	public void mergeWith(Set<ExtensibleElement> p, Set<ExtensibleElement> d, Set<ExtensibleElement> i, boolean mbdState) {
+	public void mergeWith(Set<BPELExtensibleElement> p, Set<BPELExtensibleElement> d, Set<BPELExtensibleElement> i, boolean mbdState) {
 		poss.addAll(p);
 		dis.addAll(d);
 		inv.addAll(i);
 		mbd = mbd || mbdState;
 	}
 	
-	private static String setToString(Set<ExtensibleElement> set) {
+	private static String setToString(Set<BPELExtensibleElement> set) {
 		String res;
 		if (set.size() == 0)
 			return "[]";
 		
-		Iterator<ExtensibleElement> it = set.iterator();
-		ExtensibleElement e = it.next();
+		Iterator<BPELExtensibleElement> it = set.iterator();
+		BPELExtensibleElement e = it.next();
 		res = "[" + Utility.dumpEE(e);
 		
 		while (it.hasNext()) {

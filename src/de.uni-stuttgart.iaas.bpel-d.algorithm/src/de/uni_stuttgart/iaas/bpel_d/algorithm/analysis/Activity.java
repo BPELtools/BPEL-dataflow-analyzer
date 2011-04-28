@@ -64,15 +64,15 @@ public class Activity {
 			Assign.class, Empty.class, Exit.class, ExtensionActivity.class,
 			Invoke.class, Receive.class, Reply.class, Rethrow.class,
 			Throw.class, Validate.class, Wait.class };
-	private static ExtensibleElement eventActivity;
+	private static BPELExtensibleElement eventActivity;
 	
 	/**
 	 * Analyze activities
 	 * See DIP-2726 p. 49
-	 * @param act - !! has to be of type "ExtensibleElement", since "process" is NOT an activity
+	 * @param act - !! has to be of type "BPELExtensibleElement", since "process" is NOT an activity
 	 * @param ve
 	 */
-	public static void handleActivity(ExtensibleElement act, String ve) {
+	public static void handleActivity(BPELExtensibleElement act, String ve) {
 		logger.entry("handleActivity()");
 		logger.debugObject("act", Utility.dumpEE(act));
 		logger.debugObject("ve", ve);
@@ -156,7 +156,7 @@ public class Activity {
 	 * @param act
 	 * @return
 	 */
-	private static boolean isBasicActivity(ExtensibleElement act) {
+	private static boolean isBasicActivity(BPELExtensibleElement act) {
 //		System.err.println(">isBasicActivity: act = " + Utility.dumpEE(act));
 		Class<?>[] possibleActivityTypes = act.getClass().getInterfaces();
 		List<Class<?>> basicClasses = Arrays.asList(BASIC_ACTIVITIES);
@@ -184,8 +184,8 @@ public class Activity {
 		Writes writesInAct = myState.getWrites(new Placement(act, InOut.IN));
 		
 		// line 4 to 9
-		ExtensibleElement parent = Utility.getParent(act);
-		ExtensibleElement pred = null;
+		BPELExtensibleElement parent = Utility.getParent(act);
+		BPELExtensibleElement pred = null;
 		
 		if ( (parent instanceof Sequence) ) {
 			// line 8
@@ -221,9 +221,9 @@ public class Activity {
            
 		}
 		
-		Set<ExtensibleElement> pWriters = new HashSet<ExtensibleElement>();
-		Set<ExtensibleElement> dWriters = new HashSet<ExtensibleElement>();
-		Set<ExtensibleElement> iWriters = new HashSet<ExtensibleElement>();
+		Set<BPELExtensibleElement> pWriters = new HashSet<BPELExtensibleElement>();
+		Set<BPELExtensibleElement> dWriters = new HashSet<BPELExtensibleElement>();
+		Set<BPELExtensibleElement> iWriters = new HashSet<BPELExtensibleElement>();
 		boolean dState;
 
 		// line 10 to 25
@@ -251,13 +251,13 @@ public class Activity {
 				// collect disabled writers
 				// --> remove "disabled writes on all paths" from pos and add to dis
 				Placement p = new Placement(linksIn.get(0), InOut.OUT);
-				Set<ExtensibleElement> writers = myState.getWrites(p).getDis();
-				for (ExtensibleElement writer : writers) {
+				Set<BPELExtensibleElement> writers = myState.getWrites(p).getDis();
+				for (BPELExtensibleElement writer : writers) {
 					boolean disOnAllLinks = true;
 					for (Target t : linksIn) {
 						Link l = t.getLink();
 						Placement p2 = new Placement(l, InOut.OUT);
-						Set<ExtensibleElement> dis = myState.getWrites(p2)
+						Set<BPELExtensibleElement> dis = myState.getWrites(p2)
 								.getDis();
 						if (!dis.contains(writer)) {
 							disOnAllLinks = false;
@@ -289,7 +289,7 @@ public class Activity {
 	 * @param writesInCurrent
 	 */
 	private static void purgeDuplicatesOR(Writes writesOutCurrent) {
-		Set<ExtensibleElement> poss, dis, inv;
+		Set<BPELExtensibleElement> poss, dis, inv;
 		poss = writesOutCurrent.getPoss();
 		dis = writesOutCurrent.getDis();
 		inv = writesOutCurrent.getInv();
@@ -304,7 +304,7 @@ public class Activity {
 	 * @param writeInCurrent
 	 */
 	private static void purgeDuplicateXOR(Writes writesOutCurrent) {
-		Set<ExtensibleElement> inv, dis, poss;
+		Set<BPELExtensibleElement> inv, dis, poss;
 		inv = writesOutCurrent.getInv();
 		dis = writesOutCurrent.getDis();
 		poss = writesOutCurrent.getPoss();
@@ -525,7 +525,7 @@ public class Activity {
 	 * @param act
 	 * @return
 	 */
-	private static boolean hasOnlyOneIncomingLink(ExtensibleElement act) {
+	private static boolean hasOnlyOneIncomingLink(BPELExtensibleElement act) {
 		EList<Target> linksIn = Utility.getTargetLinks(act);
 		return linksIn.size() == 1;
 	}
@@ -555,9 +555,9 @@ public class Activity {
 	 * @param act
 	 * @return
 	 */
-	private static boolean isParentHandled(ExtensibleElement act) {
+	private static boolean isParentHandled(BPELExtensibleElement act) {
 //		System.err.println(">isParentHandled: " + act.getElement().getNodeName());
-		ExtensibleElement parent = Utility.getParent(act);
+		BPELExtensibleElement parent = Utility.getParent(act);
 		
 		// BÖSER hack, eigentlich müsste Utility.getParent(act) konsistent zu dieser Abfrage sein und der Code überall entsprechend angepasst...
 		
@@ -595,9 +595,9 @@ public class Activity {
 	 * false: otherwise
 	 * 
 	 */
-	private static boolean preSequenceHandled(ExtensibleElement act) {
+	private static boolean preSequenceHandled(BPELExtensibleElement act) {
 //		System.err.println(">isSequenceHandled: " + act.getElement().getNodeName());
-		ExtensibleElement parent = Utility.getParent(act);
+		BPELExtensibleElement parent = Utility.getParent(act);
 		if ( parent instanceof Sequence ) {
 			Sequence s = (Sequence) parent;
 			EList<org.eclipse.bpel.model.Activity> activities = s.getActivities();
@@ -622,7 +622,7 @@ public class Activity {
 	 * @param act
 	 * @param variableElement
 	 */
-	public static void handleSuccessors(ExtensibleElement act, String variableElement) {
+	public static void handleSuccessors(BPELExtensibleElement act, String variableElement) {
 		logger.entry("handleSuccessors()");
 		logger.debugObject("act", Utility.dumpEE(act));
 		logger.debugObject("ve", variableElement);
@@ -631,7 +631,7 @@ public class Activity {
 		if (act instanceof org.eclipse.bpel.model.Activity) {
 			state.setFinished((org.eclipse.bpel.model.Activity) act, true);
 		}
-		ExtensibleElement parent = Utility.getParent(act);
+		BPELExtensibleElement parent = Utility.getParent(act);
 
 		// lines 5 to 7
 		if ( parent instanceof Sequence ) {
@@ -648,7 +648,7 @@ public class Activity {
 		}
 		// line 8 to 9
 		//parent = Utility.getParent(act);
-		ExtensibleElement parentOfParent;
+		BPELExtensibleElement parentOfParent;
 		parentOfParent = Utility.getParent(parent);
 
 		// line 10 to 11
@@ -938,8 +938,8 @@ public class Activity {
 		logger.debugObject("source", Utility.dumpEE(source));
 		logger.debugObject("target", Utility.dumpEE(target));
 				
-		ExtensibleElement sourceParent = Utility.getParent(source);
-		ExtensibleElement sharedParent = Utility.getSharedParent(source, target);
+		BPELExtensibleElement sourceParent = Utility.getParent(source);
+		BPELExtensibleElement sharedParent = Utility.getSharedParent(source, target);
 
 		State state = State.getInstance();
 		
@@ -951,7 +951,7 @@ public class Activity {
 		writesOut.copyData(writesIn);
 		
 		if (sharedParent != sourceParent) {
-			ExtensibleElement parent = sourceParent;
+			BPELExtensibleElement parent = sourceParent;
 			while(parent != sharedParent){
 				Writes writesTemp = overWriteNoEndDeadPath(state.getWrites(new Placement(parent, InOut.IN)),
 												   writesOut);
@@ -1006,10 +1006,10 @@ public class Activity {
 			writesOut.getDis().addAll(writesIn.getPoss());
 			writesOut.getInv().addAll(writesIn.getInv());
 			writesOut.getInv().addAll(writesTmp.getInv());
-			Set<ExtensibleElement> tmp = new HashSet<ExtensibleElement>();
+			Set<BPELExtensibleElement> tmp = new HashSet<BPELExtensibleElement>();
 			tmp.addAll(writesTmp.getPoss());
 			tmp.addAll(writesTmp.getDis());
-			Set<ExtensibleElement> writesInPoss = writesIn.getPoss(); 
+			Set<BPELExtensibleElement> writesInPoss = writesIn.getPoss(); 
 			tmp.retainAll(writesInPoss);
 			writesOut.setMbd(!tmp.isEmpty());
 			
@@ -1054,7 +1054,7 @@ public class Activity {
 			writesOut.getDis().addAll(writesTmp.getDis());
 			writesOut.getInv().addAll(writesIn.getInv());
 			writesOut.getInv().addAll(writesTmp.getInv());
-			Set<ExtensibleElement> tmp = new HashSet<ExtensibleElement>();
+			Set<BPELExtensibleElement> tmp = new HashSet<BPELExtensibleElement>();
 			tmp.retainAll(writesTmp.getPoss());
 			tmp.retainAll(writesIn.getPoss());
 			writesOut.setMbd(!tmp.isEmpty());
@@ -1146,7 +1146,7 @@ public class Activity {
 	public static void handlePick(org.eclipse.bpel.model.Pick pickActivity, String ve){
 	
 		State state = State.getInstance();
-		Set<org.eclipse.bpel.model.ExtensibleElement> branches = new HashSet<org.eclipse.bpel.model.ExtensibleElement>();
+		Set<org.eclipse.bpel.model.BPELExtensibleElement> branches = new HashSet<org.eclipse.bpel.model.BPELExtensibleElement>();
 				
 		for (OnMessage m: pickActivity.getMessages()) {
 			branches.add(m);
@@ -1156,7 +1156,7 @@ public class Activity {
 		}
 		//line 4	
 		Writes WritesInPickActivity = state.getWrites(new Placement(pickActivity, InOut.IN));
-		for (org.eclipse.bpel.model.ExtensibleElement e: branches) {
+		for (org.eclipse.bpel.model.BPELExtensibleElement e: branches) {
 			
 			Writes writesInBranch = state.getWrites(new Placement(e, InOut.IN));
             writesInBranch.clear();
@@ -1188,7 +1188,7 @@ public class Activity {
 	 */
 	public static void handleEndOfPick(org.eclipse.bpel.model.Pick pickActivity, String ve){
 		State state = State.getInstance();
-		Set<ExtensibleElement> branchActivities = new HashSet<ExtensibleElement>();
+		Set<BPELExtensibleElement> branchActivities = new HashSet<BPELExtensibleElement>();
 				
 		for (OnMessage m: pickActivity.getMessages()) {
 			branchActivities.add(m.getActivity());
@@ -1197,7 +1197,7 @@ public class Activity {
 			branchActivities.add(a.getActivity());
 		}
 		boolean allFinished = true;
-		for (ExtensibleElement e: branchActivities) {
+		for (BPELExtensibleElement e: branchActivities) {
 			if (!State.getInstance().isFinished(e)) {
 				allFinished = false;
 				break;
@@ -1207,7 +1207,7 @@ public class Activity {
 		Writes writesOutPick = state.getWrites(new Placement(pickActivity, InOut.OUT));
 		if (allFinished) {					
 			// line 3
-			for (ExtensibleElement e: branchActivities) {
+			for (BPELExtensibleElement e: branchActivities) {
 					Writes writesOutTmp = state.getWrites(new Placement(e, InOut.OUT));
 					writesOutPick.copyData(writesOutTmp);
 			}
@@ -1250,7 +1250,7 @@ public class Activity {
 	 * @param ve
 	 */
 	public static void handleEndOfIf(org.eclipse.bpel.model.If ifActivity, String ve){
-		Set<ExtensibleElement> allElement = new HashSet<ExtensibleElement>();
+		Set<BPELExtensibleElement> allElement = new HashSet<BPELExtensibleElement>();
 		org.eclipse.bpel.model.Activity mainActivity = ifActivity.getActivity();
 		allElement.add(mainActivity);
 
@@ -1266,7 +1266,7 @@ public class Activity {
 
 		// line 3
 		boolean allFinished = true;
-		for (ExtensibleElement ee: allElement) {
+		for (BPELExtensibleElement ee: allElement) {
 			if (!State.getInstance().isFinished(ee)) {
 				allFinished = false;
 				break;
@@ -1278,7 +1278,7 @@ public class Activity {
 			Writes writesInIf = state.getWrites(new Placement(ifActivity, InOut.IN));	
 
 			// line 4
-			for (ExtensibleElement ee: allElement) {
+			for (BPELExtensibleElement ee: allElement) {
 				Writes writesOutTmp = state.getWrites(new Placement(ee, InOut.OUT));
 				writesOutIf.copyData(writesOutTmp);
 			}
@@ -1301,7 +1301,7 @@ public class Activity {
 		if (!State.getInstance().isFinished(mainActivity))
 			return;
 		
-		Set<ExtensibleElement> allElements = new HashSet<ExtensibleElement>();
+		Set<BPELExtensibleElement> allElements = new HashSet<BPELExtensibleElement>();
 		
 		allElements.add(mainActivity);
 		
@@ -1344,7 +1344,7 @@ public class Activity {
 		Writes writesInScope = State.getInstance().getWrites(new Placement(scopeActivity, InOut.IN));
 		Writes writesOutScope = State.getInstance().getWrites(new Placement(scopeActivity, InOut.OUT));
 		
-		for (ExtensibleElement e: allElements) {
+		for (BPELExtensibleElement e: allElements) {
 			Writes writesOut = State.getInstance().getWrites(new Placement(e, InOut.OUT));
 			writesOutScope.copyData(writesOut);
 		}

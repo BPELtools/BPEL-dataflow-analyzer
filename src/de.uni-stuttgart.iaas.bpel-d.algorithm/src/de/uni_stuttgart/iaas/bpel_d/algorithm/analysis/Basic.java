@@ -30,7 +30,7 @@ import org.eclipse.bpel.model.Copy;
 import org.eclipse.bpel.model.ElseIf;
 import org.eclipse.bpel.model.EventHandler;
 import org.eclipse.bpel.model.Expression;
-import org.eclipse.bpel.model.ExtensibleElement;
+import org.eclipse.bpel.model.BPELExtensibleElement;
 import org.eclipse.bpel.model.FaultHandler;
 import org.eclipse.bpel.model.ForEach;
 import org.eclipse.bpel.model.FromPart;
@@ -119,7 +119,7 @@ public class Basic {
 	 * @param variableElement
 	 * @return
 	 */
-	public static boolean doesWrite(ExtensibleElement ee, String variableElement) {
+	public static boolean doesWrite(BPELExtensibleElement ee, String variableElement) {
 		logger.entry("doesWrite()");
 		logger.debugObject("act", Utility.dumpEE(ee));
 		logger.debugObject("ve", variableElement);

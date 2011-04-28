@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.bpel.model.Activity;
-import org.eclipse.bpel.model.ExtensibleElement;
+import org.eclipse.bpel.model.BPELExtensibleElement;
 
 /**
  * The current state of analysis
@@ -48,7 +48,7 @@ public class State {
 	/**
 	 * All flags (started, finished) for all activities
 	 */
-	private Map<ExtensibleElement, Flags> flags = new HashMap<ExtensibleElement, Flags>();
+	private Map<BPELExtensibleElement, Flags> flags = new HashMap<BPELExtensibleElement, Flags>();
 	
 	/**
 	 * All variables to check
@@ -93,7 +93,7 @@ public class State {
 	 * Clear all flags of all activities
 	 */
 	public void clearFlags() {
-		flags = new HashMap<ExtensibleElement, Flags>();
+		flags = new HashMap<BPELExtensibleElement, Flags>();
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class State {
 	 * @param act
 	 * @return
 	 */
-	private Flags retrieveFlags(ExtensibleElement el) {
+	private Flags retrieveFlags(BPELExtensibleElement el) {
 		if (flags.containsKey(el)) {
 			return flags.get(el);
 		} else {
@@ -127,7 +127,7 @@ public class State {
 	 * @param act
 	 * @return
 	 */
-	public boolean isFinished(ExtensibleElement el) {
+	public boolean isFinished(BPELExtensibleElement el) {
 		return retrieveFlags(el).isFinished();
 	}
 	
@@ -136,7 +136,7 @@ public class State {
 	 * @param act
 	 * @return
 	 */
-	public boolean isStarted(ExtensibleElement el) {
+	public boolean isStarted(BPELExtensibleElement el) {
 		return retrieveFlags(el).isStarted();
 	}
 	
@@ -145,7 +145,7 @@ public class State {
 	 * @param el
 	 * @param state
 	 */
-	public void setStarted(ExtensibleElement el, boolean state) {
+	public void setStarted(BPELExtensibleElement el, boolean state) {
 		retrieveFlags(el).setStarted(state);
 	}
 	

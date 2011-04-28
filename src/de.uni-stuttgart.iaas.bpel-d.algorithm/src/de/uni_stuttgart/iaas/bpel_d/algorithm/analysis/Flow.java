@@ -22,7 +22,7 @@ package de.uni_stuttgart.iaas.bpel_d.algorithm.analysis;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.bpel.model.ExtensibleElement;
+import org.eclipse.bpel.model.BPELExtensibleElement;
 import org.eclipse.bpel.model.Link;
 import org.eclipse.bpel.model.Source;
 import org.eclipse.bpel.model.Target;
@@ -53,7 +53,7 @@ public class Flow {
 //		System.err.println(">HandleFlow: element = " + Utility.dumpEE(flowActivity) + ", variableElement = " + variableElement);
 		Set<org.eclipse.bpel.model.Activity> roots = findRoots(flowActivity);
 		for (org.eclipse.bpel.model.Activity containedActivity: roots) {
-			Activity.handleActivity((ExtensibleElement)containedActivity, variableElement);
+			Activity.handleActivity((BPELExtensibleElement)containedActivity, variableElement);
 		}
 	}
 	
@@ -65,8 +65,8 @@ public class Flow {
 	 */
 	private static Set<org.eclipse.bpel.model.Activity> findRoots(org.eclipse.bpel.model.Flow flowActivity) {
 //		System.err.println(">findRoots: flowActivity = " + Utility.dumpEE(flowActivity));
-		Set<org.eclipse.bpel.model.Activity> flowChildren = Utility.findChildrenAct((ExtensibleElement)flowActivity);
-		Set<org.eclipse.bpel.model.Activity> flowDescendants = Utility.findDescendantsAct((ExtensibleElement)flowActivity);
+		Set<org.eclipse.bpel.model.Activity> flowChildren = Utility.findChildrenAct((BPELExtensibleElement)flowActivity);
+		Set<org.eclipse.bpel.model.Activity> flowDescendants = Utility.findDescendantsAct((BPELExtensibleElement)flowActivity);
 		Set<org.eclipse.bpel.model.Activity> roots = new HashSet<org.eclipse.bpel.model.Activity>();
 		for (org.eclipse.bpel.model.Activity flowChild: flowChildren) {
 			boolean sourceInFlow = false;
@@ -132,8 +132,8 @@ public class Flow {
 	
 	private static Set<org.eclipse.bpel.model.Activity> findLeaves(org.eclipse.bpel.model.Flow flowActivity) {
 //		System.err.println(">findLeaves: flowActivity = " + Utility.dumpEE(flowActivity));
-		Set<org.eclipse.bpel.model.Activity> flowChildren = Utility.findChildrenAct((ExtensibleElement)flowActivity);
-		Set<org.eclipse.bpel.model.Activity> flowDescendants = Utility.findDescendantsAct((ExtensibleElement)flowActivity);
+		Set<org.eclipse.bpel.model.Activity> flowChildren = Utility.findChildrenAct((BPELExtensibleElement)flowActivity);
+		Set<org.eclipse.bpel.model.Activity> flowDescendants = Utility.findDescendantsAct((BPELExtensibleElement)flowActivity);
 		Set<org.eclipse.bpel.model.Activity> leaves = new HashSet<org.eclipse.bpel.model.Activity>();
 		for (org.eclipse.bpel.model.Activity flowChild: flowChildren) {
 			boolean sourceInFlow = false;
