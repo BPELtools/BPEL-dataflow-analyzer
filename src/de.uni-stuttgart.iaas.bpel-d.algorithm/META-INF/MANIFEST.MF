@@ -6,13 +6,13 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.uni_stuttgart.iaas.bpel_d.algorithm.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.bpel.model;bundle-version="0.4.0";visibility:=reexport,
- org.eclipse.emf;bundle-version="2.4.0",
- org.eclipse.wst.wsdl;bundle-version="1.1.202",
- org.eclipse.emf.ecore;bundle-version="2.4.2",
- org.eclipse.emf.ecore.xmi;bundle-version="2.4.1",
+ org.eclipse.bpel.model;visibility:=reexport,
+ org.eclipse.emf,
+ org.eclipse.wst.wsdl,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.xmi,
  javax.wsdl;bundle-version="[1.5.0,1.6.0)";visibility:=reexport,
- org.eclipse.ui.ide.application;bundle-version="1.0.200"
+ org.eclipse.ui.ide.application
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uni_stuttgart.iaas.bpel_d.algorithm.analysis,
