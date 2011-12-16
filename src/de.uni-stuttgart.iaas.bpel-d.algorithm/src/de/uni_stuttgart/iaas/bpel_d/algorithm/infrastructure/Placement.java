@@ -23,7 +23,10 @@ import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Utility;
 
 
 /**
- * Relationship Activity <-> In/Out/Temp
+ * Relationship Activity <-> In/Out/Temp <br/>
+ * Activity: {@link Placement#getElement()} <br/>
+ * In/Out/Temp: {@link Placement#getPlace()} -> {@link InOut}
+ * 
  * @author Sebastian Breier
  *
  */

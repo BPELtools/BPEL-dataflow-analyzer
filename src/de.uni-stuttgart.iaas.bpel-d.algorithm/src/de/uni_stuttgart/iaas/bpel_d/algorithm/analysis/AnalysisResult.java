@@ -37,6 +37,13 @@ public class AnalysisResult {
 		return allVariableElementNames;
 	}
 	
+	/**
+	 * 
+	 * @return variable element -> ({@link Placement} -> {@link Writes})
+	 * 
+	 * {@link Placement} also contains the activity
+	 * 
+	 */
 	public HashMap<String, Map<Placement, Writes>> getResultData() {
 		return resultData;
 	}
