@@ -208,7 +208,8 @@ public class Process {
 //							Part p = t.getPart();
 //							if (p != null) {
 //								name = name + "." + p.getName();
-//							}
+//							} 
+
 							String p = t.getElement().getAttribute("part");
 							if (!p.isEmpty()) {
 								name = name.concat(".").concat(p);
@@ -218,7 +219,11 @@ public class Process {
 							if (q != null) {
 								String query = q.getValue();
 								// Annahme: query == /a/b/c ohne Variable davor
-								res.add(name + query);
+								
+								// fix for issue : if the query looks like 'a' NOT '/a', 
+								// it is not correct to directly concatenate the variable name with it.
+								String dubbleCheckedQuery = query.startsWith("/") ? query : "/".concat(query); 
+								res.add(name + dubbleCheckedQuery);
 							} else {
 								res.add(name);
 							}
