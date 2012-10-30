@@ -41,6 +41,7 @@ import org.grlea.log.SimpleLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import de.uni_stuttgart.iaas.bpel.model.utilities.Utility;
 import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.JoinVariableResolver;
 import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.InOut;
 import de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure.Placement;

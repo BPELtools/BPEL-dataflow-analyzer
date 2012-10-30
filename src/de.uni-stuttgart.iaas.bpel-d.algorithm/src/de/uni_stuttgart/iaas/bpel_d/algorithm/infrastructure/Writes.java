@@ -24,8 +24,7 @@ import java.util.Set;
 
 import org.eclipse.bpel.model.BPELExtensibleElement;
 
-import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Utility;
-
+import de.uni_stuttgart.iaas.bpel.model.utilities.Utility;
 
 /**
  * The writer state for a certain activity in a certain state

@@ -19,8 +19,7 @@ package de.uni_stuttgart.iaas.bpel_d.algorithm.infrastructure;
 
 import org.eclipse.bpel.model.BPELExtensibleElement;
 
-import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.Utility;
-
+import de.uni_stuttgart.iaas.bpel.model.utilities.Utility;
 
 /**
  * Relationship Activity <-> In/Out/Temp <br/>
