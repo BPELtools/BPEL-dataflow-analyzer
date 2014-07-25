@@ -114,13 +114,14 @@ public class Analyzer implements IApplication {
 			}
 
 			Map args = arg0.getArguments();
-			if (!args.containsKey("--file")) {
+			String[] realArgs = (String[]) args.get("application.args");
+			if ((realArgs.length == 0) || (!realArgs[0].equals("--file"))) {
 				System.err
 						.println("No file given. Please use --file <filename>");
 				return null;
 			}
 
-			String fn = (String) args.get("--file");
+			String fn = realArgs[1];
 
 			URI uri = URI.createFileURI(fn);
 			Factory fac = Resource.Factory.Registry.INSTANCE.getFactory(uri);
