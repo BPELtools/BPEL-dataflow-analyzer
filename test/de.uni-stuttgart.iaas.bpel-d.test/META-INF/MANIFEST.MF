@@ -4,11 +4,11 @@ Bundle-Name: Test Plug-in
 Bundle-SymbolicName: de.uni_stuttgart.iaas.bpel_d.test;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.junit4,
- org.eclipse.bpel.model,
+Require-Bundle: org.eclipse.bpel.model,
  de.uni-stuttgart.iaas.bpel-d.algorithm,
  org.eclipse.core.runtime,
  org.eclipse.emf.common,
  org.eclipse.emf.ecore,
- org.eclipse.wst.wsdl
+ org.eclipse.wst.wsdl,
+ org.junit;bundle-version="[4.0.0,5.0.0)"
 Import-Package: org.eclipse.emf.ecore.resource

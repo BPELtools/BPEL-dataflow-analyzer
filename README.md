@@ -11,7 +11,7 @@ See also http://www.iaas.uni-stuttgart.de/.
 
 ## Introduction
 You should definitely read DIP-2726 to understand the purpose and internal working of the program.
-The program uses the Eclipse BPEL project's EMF (Eclipse Modeling Framework) model to analyze BPEL
+The program uses the [Eclipse BPEL Designer] project's EMF (Eclipse Modeling Framework) model to analyze BPEL
 processes.
 
 This README will explain how to use the software and how to build and extend it yourself.
@@ -22,8 +22,12 @@ However, most activity types are supported.
 This program depends on:
 
 - Java 6
-- CVS checkout of [Eclipse BPEL Designer](https://eclipse.org/bpel/) as of 2010-09-01 (see below)
-  - org.eclipse.bpel.model, org.eclipse.bpel.common.model, org.eclipse.bpel.common.ui
+- git clone of [Eclipse BPEL Designer]. Commit 43b50022c77f09fcec19019d09b7e82063ce9772 (of 2015-08-20) works. Import following projects:
+  - org.eclipse.bpel.common.model
+  - org.eclipse.bpel.model
+- [BPEL-model-utilities](https://github.com/IAAS/BPEL-model-utilities) - de.uni_stuttgart.iaas.bpel.model.utilities
+- [BPEL4Chor-model](https://github.com/IAAS/BPEL4Chor-model) - org.bpel4chor.model
+- Following dependencies should be automatically be resovled:
   - org.eclipse.emf.common
   - org.eclipse.emf.ecore
   - org.eclipse.wst.wsdl
@@ -31,9 +35,8 @@ This program depends on:
 
 ## Use it using Eclipse
 
-
-1. Install Eclipse. Currently, the program runs on Eclipse Helios (aka version 3.6.0) JEE version
-2. Pull the source for Eclipse BPEL
+1. Install [Eclipse](http://www.eclipse.org/downloads/). Currently, the program runs on [Eclipse Mars (aka version 4.5.1) JEE version](http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/mars1).
+2. Pull the source for the [Eclipse BPEL Designer]
   See http://www.eclipse.org/bpel/install.php on how to do this.
   Basically, connect to :pserver:anonymous@dev.eclipse.org:/cvsroot/technology,
   check out from org.eclipse.bpel/plugins:
@@ -106,3 +109,5 @@ analysis.Utility contains several interesting utility methods:
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+   [Eclispe BPEL Designer]: https://eclipse.org/bpel/
