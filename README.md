@@ -1,45 +1,15 @@
-BPELDataFlowAnalyzer
---------------------
+# BPELDataFlowAnalyzer
 
 This program implements a data flow analysis algorithm on BPEL processes as described in the following scientific works:
+
  * Kopp, Oliver; Khalaf, Rania; Leymann, Frank: Reaching Definitions Analysis Respecting Dead Path Elimination Semantics in BPEL Processes, Technical Report No. 2007/04, University of Stuttgart, 2007. http://www2.informatik.uni-stuttgart.de/cgi-bin/NCSTRL/NCSTRL_view.pl?id=TR-2007-04&mod=0&engl=1&inst=IAAS
- * Kopp, Oliver; Khalaf, Rania; Leymann, Frank: Deriving Explicit Data Links in WS-BPEL Processes. In: Proceedings of the International Conference on Services Computing, 2008.
+ * Kopp, Oliver; Khalaf, Rania; Leymann, Frank: Deriving Explicit Data Links in WS-BPEL Processes. In: Proceedings of the International Conference on Services Computing, 2008. http://dx.doi.org/10.1109/SCC.2008.122
  * Breier, Sebastian: Extended Data-flow Analysis on BPEL Processes, Diploma Thesis 2726, IAAS, University of Stuttgart, 2008.  http://www.informatik.uni-stuttgart.de/cgi-bin/NCSTRL/NCSTRL_view.pl?id=DIP-2726&engl=1
  * Gao, Yangyang: Implementierung einer Datenflussanalyse für WS-BPEL 2.0, Student Thesis 2246, IAAS, University of Stuttgart, 2010. http://www2.informatik.uni-stuttgart.de/cgi-bin/NCSTRL/NCSTRL_view.pl?id=STUD-2246&engl=1
 
 See also http://www.iaas.uni-stuttgart.de/.
 
-Copyright
----------
-   Copyright 2008 Sebastian Breier
-   Copyright 2010 Gao Yangyang and Oliver Kopp
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
-Released Versions
------------------
-Version: 0.2 2010-02-25
-Author: Gao Yangyang
-License: Apache License 2.0
-E-mail: jigong_liang@hotmail.com
-
-Version: 0.1 2008-08-04
-Author: Sebastian Breier
-License: Apache License 2.0
-E-mail: Sebastian.Breier@gmx.net
-
-Introduction
-------------
+## Introduction
 You should definitely read DIP-2726 to understand the purpose and internal working of the program.
 The program uses the Eclipse BPEL project's EMF (Eclipse Modeling Framework) model to analyze BPEL
 processes.
@@ -50,17 +20,18 @@ Unfortunately, the software has some limitations and is still unfinished.
 However, most activity types are supported.
 
 This program depends on:
+
 - Java 6
-- CVS checkout of Eclipse BPEL Designer as of 2010-09-01 (see below)
+- CVS checkout of [Eclipse BPEL Designer](https://eclipse.org/bpel/) as of 2010-09-01 (see below)
   - org.eclipse.bpel.model, org.eclipse.bpel.common.model, org.eclipse.bpel.common.ui
   - org.eclipse.emf.common
   - org.eclipse.emf.ecore
   - org.eclipse.wst.wsdl
   - org.eclipse.emf.ecore.xml
 
-  
-Use it using Eclipse
---------------------
+## Use it using Eclipse
+
+
 1. Install Eclipse. Currently, the program runs on Eclipse Helios (aka version 3.6.0) JEE version
 2. Pull the source for Eclipse BPEL
   See http://www.eclipse.org/bpel/install.php on how to do this.
@@ -75,28 +46,29 @@ Use it using Eclipse
 5. For a test run, run "BPEL Dataflow Analyzer Test"
 6. In case you want to analyze other models, check de.uni_stuttgart.iaas.bpel_d.test.Start
 
-Command-line run without Eclipse support (unsupported)
-------------------------------------------------------
-1. Edit the Build Path of BPELDataFlowAnalyzer. 
+## Command-line run without Eclipse support (unsupported)
+
+1. Edit the Build Path of BPELDataFlowAnalyzer.
  * Add the checked out parts of Eclipse BPEL project.
  * Add the org.eclipse.emf.* and org.eclipse.wst.wsdl dependencies as described above.
  * The JAR files can be found in the eclipse/plugins directory.
-2. Edit "Analyzer.java" method "main" to contain the right paths and file names to your BPEL process and the variable list file. 
+2. Edit "Analyzer.java" method "main" to contain the right paths and file names to your BPEL process and the variable list file.
 3. Run "Analyzer.java" as Java application.
 
-Restrictions
-------------
+## Restrictions
+
 - Containment of variable elements is done using string matching
 
-Not implemented are:
-- Fault Handler
-- Compensation Handler
+### Not implemented are
 
-Extend it
----------
+- Fault Handlers
+- Compensation Handlers
+
+## Extend it
 When you got it to run, you can also extend the program easily.
 
 Some words about architecture:
+
 - The Analyzer class is just startup code which loads the BPEL file through Eclipse BPEL project and
 starts analysis.
 - The classes in the infrastructure package are necessary to encapsulate the analysis algorithm
@@ -111,9 +83,26 @@ for each activity.
 "State" also maps activities to a set of flags.
 Also, it saves variables to analyze.
 "State" also contains various methods for retrieving and saving the described data.
-Please see usage examples of the "State" class in many methods for more information. 
+Please see usage examples of the "State" class in many methods for more information.
 
 analysis.Utility contains several interesting utility methods:
+
 - dumpSet will pretty-print a set of ExtensibleElements (activity and process elements)
 - dumpEE will pretty-print an ExtensibleElement
 - others
+
+## Copyright and License
+ * Copyright 2008 Sebastian Breier
+ * Copyright 2010 Gao Yangyang and Oliver Kopp
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
