@@ -28,7 +28,7 @@ public class Start implements IApplication {
 			//uri = URI.createFileURI("D:\\workspaces\\BPEL-D\\de.uni-stuttgart.iaas.bpel-d.test\\processes\\bpeltest\\testAss.bpel");
 
 			Factory fac = Resource.Factory.Registry.INSTANCE.getFactory(uri);
-			BPELResource bpel_resource = (BPELResource) fac.createResource(uri);			
+			BPELResource bpel_resource = (BPELResource) fac.createResource(uri);
 			bpel_resource.load(null);
 			org.eclipse.bpel.model.Process process = bpel_resource.getProcess();
 
