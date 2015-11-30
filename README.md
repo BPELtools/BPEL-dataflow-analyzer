@@ -11,7 +11,7 @@ See also http://www.iaas.uni-stuttgart.de/.
 
 ## Introduction
 You should definitely read DIP-2726 to understand the purpose and internal working of the program.
-The program uses the [Eclipse BPEL Designer] project's EMF (Eclipse Modeling Framework) model to analyze BPEL
+The program uses a [fork](https://github.com/BPELtools/bpel/tree/removing_XSD2XML) of the [Eclipse BPEL Designer] project's EMF (Eclipse Modeling Framework) model to analyze BPEL
 processes.
 
 This README will explain how to use the software and how to build and extend it yourself.
@@ -21,8 +21,8 @@ However, most activity types are supported.
 
 This program depends on:
 
-- Java 6
-- git clone of [Eclipse BPEL Designer]. Commit 43b50022c77f09fcec19019d09b7e82063ce9772 (of 2015-08-20) works. Import following projects:
+- Java 7
+- git clone of the Eclipse BPEL Designer fork. Branch `removing_XSD2XML` works. Import following projects:
   - org.eclipse.bpel.common.model
   - org.eclipse.bpel.model
 - [BPEL-model-utilities](https://github.com/IAAS/BPEL-model-utilities) - de.uni_stuttgart.iaas.bpel.model.utilities
@@ -35,19 +35,16 @@ This program depends on:
 
 ## Use it using Eclipse
 
-1. Install [Eclipse](http://www.eclipse.org/downloads/). Currently, the program runs on [Eclipse Mars (aka version 4.5.1) JEE version](http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/mars1).
-2. Pull the source for the [Eclipse BPEL Designer]
-  See http://www.eclipse.org/bpel/install.php on how to do this.
-  Basically, connect to :pserver:anonymous@dev.eclipse.org:/cvsroot/technology,
-  check out from org.eclipse.bpel/plugins:
+1. Install [Eclipse](http://www.eclipse.org/downloads/). Currently, the program runs on [Kepler Service Release 2 JEE version](https://eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/keplersr2).
+2. Pull the source for the Eclipse BPEL Designer fork from https://github.com/BPELtools/bpel/tree/removing_XSD2XML
+3. Import following projects into the workspace
   - org.eclipse.bpel.common.ui
   - org.eclipse.bpel.model
   - org.eclipse.bpel.common.model
-  Check out the HEAD revisions.
-3. Import the BPELDataFlowAnalyzer project into Eclipse.
-4. Import the test project (de.uni-stuttgart.iaas.bpel-d.test) into Eclipse
-5. For a test run, run "BPEL Dataflow Analyzer Test"
-6. In case you want to analyze other models, check de.uni_stuttgart.iaas.bpel_d.test.Start
+4. Import the BPELDataFlowAnalyzer project (`de.uni-stuttgart.iaas.bpel-d.algorithm`) into Eclipse.
+5. Import the test project (`de.uni-stuttgart.iaas.bpel-d.test`) into Eclipse
+6. For a test run, run "BPEL Dataflow Analyzer Test"
+7. In case you want to analyze other models, check de.uni_stuttgart.iaas.bpel_d.test.Start
 
 ## Command-line run without Eclipse support (unsupported)
 
@@ -88,12 +85,6 @@ Also, it saves variables to analyze.
 "State" also contains various methods for retrieving and saving the described data.
 Please see usage examples of the "State" class in many methods for more information.
 
-analysis.Utility contains several interesting utility methods:
-
-- dumpSet will pretty-print a set of ExtensibleElements (activity and process elements)
-- dumpEE will pretty-print an ExtensibleElement
-- others
-
 ## Copyright and License
  * Copyright 2008 Sebastian Breier
  * Copyright 2010 Gao Yangyang and Oliver Kopp
@@ -110,4 +101,4 @@ analysis.Utility contains several interesting utility methods:
    See the License for the specific language governing permissions and
    limitations under the License.
 
-   [Eclispe BPEL Designer]: https://eclipse.org/bpel/
+   [Eclipse BPEL Designer]: https://eclipse.org/bpel/
