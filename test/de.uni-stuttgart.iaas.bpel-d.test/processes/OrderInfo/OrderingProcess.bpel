@@ -1,0 +1,178 @@
+<bpel:process name="OrderingProcess" targetNamespace="http://www.iaas.uni-stuttgart.de"
+              suppressJoinFailure="yes" xmlns:tns="http://www.iaas.uni-stuttgart.de"
+              xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+              xmlns:plts="http://www.iaas.uni-stuttgart.de/OrderingProcess/partnerLinkTypes"
+              xmlns:po="http://www.bpel4chor.org/splitProcess/test/services/ProcessOrder"
+              xmlns:pp="http://www.bpel4chor.org/splitProcess/test/services/ProcessPayment"
+              exitOnStandardFault="no" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Import the client WSDL -->
+    <bpel:import namespace="http://www.iaas.uni-stuttgart.de/OrderingProcess/partnerLinkTypes"
+                 location="partnerLinks.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpel:import namespace="http://www.bpel4chor.org/splitProcess/test/services/ProcessPayment"
+                 location="ProcessPayment.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpel:import namespace="http://www.bpel4chor.org/splitProcess/test/services/ProcessOrder"
+                 location="ProcessOrder.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpel:import namespace="http://www.iaas.uni-stuttgart.de"
+                 location="OrderingProcess.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+
+    <!-- ================================================================= -->
+    <!-- ORCHESTRATION LOGIC -->
+    <!-- Set of activities coordinating the flow of messages across the -->
+    <!-- services integrated within this business process -->
+    <!-- ================================================================= -->
+
+    <bpel:partnerLinks xmlns:plt="http://www.iaas.uni-stuttgart.de/OrderingProcess/partnerLinkTypes">
+        <bpel:partnerLink name="orderingPL" partnerLinkType="tns:OrderingProcessPT"
+                          myRole="OrderProcessProvider"/>
+        <bpel:partnerLink name="processOrderPL"
+                          partnerLinkType="plts:ProcessOrderPLT" partnerRole="ProcessOrder"/>
+        <bpel:partnerLink name="processPaymentPL"
+                          partnerLinkType="plts:ProcessPaymentPLT" partnerRole="ProcessPayment"/>
+    </bpel:partnerLinks>
+    <bpel:variables>
+        <bpel:variable name="orderInfo" messageType="po:processOrder"/>
+
+        <bpel:variable name="response" messageType="tns:orderResponse"/>
+
+        <bpel:variable name="messageForProcessPaymentService" messageType="pp:processPayment"/>
+    </bpel:variables>
+    <bpel:correlationSets>
+        <bpel:correlationSet name="CorrelationSet"
+                             properties="tns:correlProperty"/>
+    </bpel:correlationSets>
+    <bpel:flow name="Flow">
+        <bpel:links>
+            <bpel:link name="ReceiveA2AssignB"/>
+            <bpel:link name="AssignB2C"/>
+            <bpel:link name="AssignB2E"/>
+            <bpel:link name="AssignB2D"/>
+            <bpel:link name="AssignC2E"/>
+            <bpel:link name="AssignD2E"/>
+            <bpel:link name="AssignE2InvokeF"/>
+            <bpel:link name="InvokeF2G"/>
+            <bpel:link name="InvokeF2ReplyH"/>
+        </bpel:links>
+        <bpel:receive name="A" createInstance="yes"
+                      partnerLink="orderingPL" operation="order" portType="tns:OrderingProcess"
+                      variable="orderInfo">
+            <bpel:sources>
+                <bpel:source linkName="ReceiveA2AssignB"/>
+            </bpel:sources>
+            <bpel:correlations>
+                <bpel:correlation set="CorrelationSet" initiate="yes" />
+            </bpel:correlations>
+        </bpel:receive>
+        <bpel:assign validate="no" name="B">
+            <bpel:targets>
+                <bpel:target linkName="ReceiveA2AssignB"/>
+            </bpel:targets>
+            <bpel:sources>
+                <bpel:source linkName="AssignB2C">
+                    <bpel:transitionCondition>$orderInfo.parameters/po:status="gold"</bpel:transitionCondition>
+                </bpel:source>
+                <bpel:source linkName="AssignB2D">
+                    <bpel:transitionCondition>$orderInfo.parameters/po:status="silver"</bpel:transitionCondition>
+                </bpel:source>
+                <bpel:source linkName="AssignB2E"/>
+            </bpel:sources>
+            <!-- we assume that copy statements are executed from top to bottom. This is NOT required by the BPEL specification -->
+            <!-- initialize messageForProcessPaymentService variable -->
+            <bpel:copy>
+                <bpel:from>
+                    <bpel:literal>
+                        <pp:processPayment>
+                            <pp:actNum></pp:actNum>
+                            <pp:amt>0</pp:amt>
+                        </pp:processPayment>
+                    </bpel:literal>
+                </bpel:from>
+                <bpel:to>$messageForProcessPaymentService.parameters</bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from>$orderInfo.parameters/po:accountNumber</bpel:from>
+                <bpel:to>$messageForProcessPaymentService.parameters/pp:actNum</bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from>
+                    <bpel:literal>Dear customer, ...</bpel:literal>
+                </bpel:from>
+                <bpel:to part="text" variable="response"/>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from>$orderInfo.parameters/po:totalPrice + 5 * $orderInfo.parameters/po:numDeliveries</bpel:from>
+                <bpel:to>$messageForProcessPaymentService.parameters/pp:amt</bpel:to>
+            </bpel:copy>
+        </bpel:assign>
+        <bpel:assign validate="no" name="C">
+            <bpel:targets>
+                <bpel:target linkName="AssignB2C"/>
+            </bpel:targets>
+            <bpel:sources>
+                <bpel:source linkName="AssignC2E"/>
+            </bpel:sources>
+            <bpel:copy>
+                <bpel:from>concat($response.text, "10% discount")</bpel:from>
+                <bpel:to part="text" variable="response"/>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from>$messageForProcessPaymentService.parameters/pp:amt * 0.9</bpel:from>
+                <bpel:to>$messageForProcessPaymentService.parameters/pp:amt</bpel:to>
+            </bpel:copy>
+        </bpel:assign>
+        <bpel:assign validate="no" name="D">
+            <bpel:targets>
+                <bpel:target linkName="AssignB2D"/>
+            </bpel:targets>
+            <bpel:sources>
+                <bpel:source linkName="AssignD2E"/>
+            </bpel:sources>
+            <bpel:copy>
+                <bpel:from>concat($response.text, " 5% discount")</bpel:from>
+                <bpel:to>$response.text</bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from>$messageForProcessPaymentService.parameters/pp:amt * 0.95</bpel:from>
+                <bpel:to>$messageForProcessPaymentService.parameters/pp:amt</bpel:to>
+            </bpel:copy>
+        </bpel:assign>
+        <bpel:assign validate="no" name="E">
+            <bpel:targets>
+                <bpel:target linkName="AssignB2E"/>
+                <bpel:target linkName="AssignC2E"/>
+                <bpel:target linkName="AssignD2E"/>
+            </bpel:targets>
+            <bpel:sources>
+                <bpel:source linkName="AssignE2InvokeF"/>
+            </bpel:sources>
+            <bpel:copy>
+                <bpel:from>
+                    <bpel:literal>price calculated</bpel:literal>
+                </bpel:from>
+                <bpel:to>$orderInfo.parameters/po:status</bpel:to>
+            </bpel:copy>
+        </bpel:assign>
+        <bpel:invoke name="F" partnerLink="processOrderPL"
+                     operation="processOrder" portType="po:ProcessOrder" inputVariable="orderInfo">
+            <bpel:targets>
+                <bpel:target linkName="AssignE2InvokeF"/>
+            </bpel:targets>
+            <bpel:sources>
+                <bpel:source linkName="InvokeF2G"/>
+                <bpel:source linkName="InvokeF2ReplyH"/>
+            </bpel:sources>
+        </bpel:invoke>
+        <bpel:invoke name="G" partnerLink="processPaymentPL" operation="processPayment" portType="pp:ProcessPayment"
+                     inputVariable="messageForProcessPaymentService">
+            <bpel:targets>
+                <bpel:target linkName="InvokeF2G"/>
+            </bpel:targets>
+        </bpel:invoke>
+        <bpel:reply name="H" partnerLink="orderingPL"
+                    operation="order" portType="tns:OrderingProcess" variable="response">
+            <bpel:targets>
+                <bpel:target linkName="InvokeF2ReplyH"/>
+            </bpel:targets>
+        </bpel:reply>
+    </bpel:flow>
+</bpel:process>
