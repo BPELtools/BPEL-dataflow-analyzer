@@ -19,12 +19,12 @@ import de.uni_stuttgart.iaas.bpel_d.algorithm.analysis.AnalysisResult;
 public class Start implements IApplication {
 
 	private final SimpleLogger logger = new SimpleLogger(Start.class);
-	
+
 	@Override
 	public Object start(IApplicationContext arg0) throws Exception {
 		try {
 			// URL url = this.getBundle().getEntry("");
-			URI uri = URI.createPlatformPluginURI("/de.uni_stuttgart.iaas.bpel_d.test/processes/bpeltest/testAss.bpel",	false);
+			URI uri = URI.createPlatformPluginURI("/de.uni_stuttgart.iaas.bpel_d.test/processes/AssignTest/testAss.bpel", false);
 			//uri = URI.createFileURI("D:\\workspaces\\BPEL-D\\de.uni-stuttgart.iaas.bpel-d.test\\processes\\bpeltest\\testAss.bpel");
 
 			Factory fac = Resource.Factory.Registry.INSTANCE.getFactory(uri);
